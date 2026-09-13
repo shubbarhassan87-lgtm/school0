@@ -1,0 +1,1328 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصة المدرسة الإلكترونية الشاملة</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #f4f7fe;
+      --card-bg: #ffffff;
+      --text-color: #2b3674;
+      --card-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      --primary-color: #4318FF;
+    }
+
+    body.dark-mode {
+      --bg-color: #0b1437;
+      --card-bg: #111c44;
+      --text-color: #ffffff;
+      --card-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 40px; transition: 0.3s; }
+
+    .top-header {
+      background: linear-gradient(135deg, #4318FF 0%, #11047A 100%);
+      color: white; padding: 25px 20px;
+      border-bottom-left-radius: 25px; border-bottom-right-radius: 25px;
+      box-shadow: 0 5px 20px rgba(67, 24, 255, 0.3);
+      position: relative;
+    }
+    .school-title { text-align: center; font-size: 1.6rem; font-weight: 800; margin-bottom: 12px; }
+    .user-badge { text-align: center; font-size: 0.9rem; background: rgba(255,255,255,0.2); display: inline-block; padding: 4px 15px; border-radius: 20px; margin-top: 5px; }
+    
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; text-align: center; margin-top: 15px; }
+    .info-item { background: rgba(255, 255, 255, 0.12); padding: 8px; border-radius: 12px; backdrop-filter: blur(5px); }
+    .info-item .label { font-size: 0.75rem; opacity: 0.8; display: block; }
+    .info-item .val { font-size: 0.95rem; font-weight: 700; }
+
+    .header-btns { position: absolute; top: 15px; left: 15px; display: flex; gap: 8px; }
+    .btn-header { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 12px; border-radius: 15px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+
+    #login-view { max-width: 450px; margin: 40px auto; padding: 30px; background: var(--card-bg); border-radius: 20px; box-shadow: var(--card-shadow); text-align: center; }
+    .login-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+    .tab-btn { flex: 1; padding: 10px; border: none; background: #eee; font-weight: bold; border-radius: 10px; cursor: pointer; color: #555; }
+    .tab-btn.active { background: #4318FF; color: white; }
+
+    .container { max-width: 1300px; margin: 25px auto; padding: 0 15px; }
+    .section-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+    .modules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; }
+
+    .color-box {
+      border-radius: 20px; padding: 22px; color: white;
+      box-shadow: var(--card-shadow); display: flex; flex-direction: column;
+      justify-content: space-between; min-height: 130px; cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .color-box:hover { transform: translateY(-6px); }
+    .color-box h3 { font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .color-box p { font-size: 0.8rem; opacity: 0.85; margin-top: 6px; }
+
+    .box-teachers { background: linear-gradient(135deg, #FF5E7E, #FF9966); }
+    .box-students { background: linear-gradient(135deg, #00C6FF, #0072FF); }
+    .box-grades { background: linear-gradient(135deg, #7F00FF, #E100FF); }
+    .box-reports { background: linear-gradient(135deg, #FF416C, #FF4B2B); }
+    .box-settings { background: linear-gradient(135deg, #30336b, #130f40); }
+
+    .view-section { display: none; margin-top: 20px; background: var(--card-bg); padding: 25px; border-radius: 20px; box-shadow: var(--card-shadow); }
+    .back-btn { background: #6c757d; color: white; padding: 8px 16px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; }
+
+    .controls-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+    .btn-action { padding: 9px 16px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; color: white; display: inline-flex; align-items: center; gap: 6px; font-size: 0.88rem; transition: 0.2s; }
+    .btn-action:hover { opacity: 0.9; transform: scale(1.02); }
+    .btn-green { background-color: #05cd99; }
+    .btn-blue { background-color: #4318FF; }
+    .btn-purple { background-color: #8e44ad; }
+    .btn-red { background-color: #EE5D50; }
+    .btn-telegram { background-color: #0088cc; }
+    
+    select, input, textarea { padding: 9px 14px; border-radius: 10px; border: 1px solid #e0e5f2; font-family: inherit; background: var(--card-bg); color: var(--text-color); width: 100%; margin-bottom: 10px; }
+
+    /* تنسيقات الجدول المنظم لسجل الدرجات */
+    .table-container { 
+      overflow-x: auto; 
+      max-height: 600px; 
+      border-radius: 14px; 
+      border: 1px solid #e0e5f2;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+    }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.88rem; }
+    th, td { border-bottom: 1px solid #e2e8f0; border-left: 1px solid #e2e8f0; padding: 8px 10px; text-align: center; white-space: nowrap; }
+    th:last-child, td:last-child { border-left: none; }
+    
+    th { 
+      background: #4318FF; 
+      color: white; 
+      position: sticky; 
+      top: 0; 
+      z-index: 2; 
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+    }
+    th.group-header {
+      background: #2b12b3;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    th.midterm-header {
+      background: #7F00FF;
+    }
+    th.final-header {
+      background: #00b894;
+    }
+
+    tbody tr:nth-child(even) { background-color: rgba(67, 24, 255, 0.02); }
+    tbody tr:hover { background-color: rgba(67, 24, 255, 0.05); }
+
+    .grade-input {
+      width: 58px;
+      text-align: center;
+      border-radius: 8px;
+      border: 1.5px solid #dcdfe6;
+      padding: 5px;
+      margin-bottom: 0;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      background: #fff;
+    }
+    body.dark-mode .grade-input {
+      background: #0b1437;
+      border-color: #2b3674;
+      color: #fff;
+    }
+    .grade-input:focus {
+      border-color: #4318FF;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(67, 24, 255, 0.15);
+    }
+    .grade-input.midterm-input {
+      border-color: #7F00FF;
+      background-color: #fcf8ff;
+    }
+    body.dark-mode .grade-input.midterm-input { background-color: #1a0b36; }
+
+    .calc-val {
+      font-weight: 700;
+      color: #718096;
+      background: #edf2f7;
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: inline-block;
+      min-width: 42px;
+      font-size: 0.85rem;
+    }
+    body.dark-mode .calc-val { background: #1a234d; color: #a0aec0; }
+
+    .annual-badge {
+      font-size: 1rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 8px;
+      display: inline-block;
+      min-width: 48px;
+    }
+    .badge-pass { background: #e6fffa; color: #047857; border: 1px solid #b2f5ea; }
+    .badge-fail { background: #fff5f5; color: #e53e3e; border: 1px solid #fed7d7; }
+
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 15px; }
+    .item-card { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: 15px; padding: 18px; box-shadow: var(--card-shadow); }
+
+    .teacher-info-list { list-style: none; margin: 10px 0; font-size: 0.9rem; }
+    .teacher-info-list li { margin-bottom: 8px; display: flex; justify-content: space-between; border-bottom: 1px dashed #edf2f7; padding-bottom: 5px; }
+    .hall-tag { background: #e0e7ff; color: #4318FF; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; margin-left: 4px; display: inline-block; }
+    .spec-tag { background: #e6fffa; color: #047857; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
+
+    .settings-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; max-width: 450px; }
+    .settings-group label { font-weight: bold; font-size: 0.9rem; }
+    
+    .student-item { background: rgba(0,0,0,0.02); border: 1px solid #edf2f7; border-radius: 8px; padding: 8px; margin-bottom: 8px; }
+
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px);
+      display: none; justify-content: center; align-items: center; z-index: 1000;
+    }
+    .modal-card {
+      background: var(--card-bg); width: 90%; max-width: 520px;
+      border-radius: 20px; padding: 25px; box-shadow: var(--card-shadow);
+      animation: modalFade 0.3s ease-out; max-height: 90vh; overflow-y: auto;
+    }
+    @keyframes modalFade { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-header { font-size: 1.2rem; font-weight: 800; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+    .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; max-height: 120px; overflow-y: auto; padding: 10px; border: 1px solid #e0e5f2; border-radius: 10px; margin-bottom: 15px; }
+    .checkbox-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; background: rgba(0,0,0,0.03); padding: 5px 10px; border-radius: 8px; }
+    .checkbox-item input { width: auto; margin-bottom: 0; }
+  </style>
+</head>
+<body>
+
+  <header class="top-header">
+    <div class="header-btns">
+      <button class="btn-header" onclick="toggleTheme()">🌙 الوضع</button>
+      <button class="btn-header" id="logout-btn" style="display:none; background:#EE5D50;" onclick="logout()">خروج 🚪</button>
+    </div>
+    <div class="school-title" id="header-school">🏫 المنصة المدرسية الإلكترونية</div>
+    <div style="text-align: center;">
+      <span class="user-badge" id="current-user-badge">يرجى تسجيل الدخول</span>
+    </div>
+    <div class="info-grid" id="stats-header" style="display:none;">
+      <div class="info-item"><span class="label">إجمالي الكادر التدريسي</span><span class="val" id="count-teachers">0</span></div>
+      <div class="info-item"><span class="label">إجمالي القاعات الدراسية</span><span class="val" id="count-halls">0</span></div>
+      <div class="info-item"><span class="label">إجمالي الطلاب</span><span class="val" id="count-students">0</span></div>
+      <div class="info-item"><span class="label">التاريخ</span><span class="val" id="current-date">--/--/----</span></div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- 1. نافذة إضافة / تعديل المدرس -->
+    <div class="modal-overlay" id="teacher-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <span id="modal-title">👨‍🏫 إضافة مدرس جديد</span>
+          <button style="border:none; background:none; font-size:1.2rem; cursor:pointer;" onclick="closeTeacherModal()">❌</button>
+        </div>
+        
+        <label style="font-size:0.85rem; font-weight:bold;">الاسم الثلاثي للمدرس:</label>
+        <input type="text" id="modal-teacher-name" placeholder="مثال: أ. أحمد فاضل علي">
+
+        <label style="font-size:0.85rem; font-weight:bold;">التخصص / المادة الدراسية:</label>
+        <input type="text" id="modal-teacher-subject" placeholder="مثال: الكيمياء">
+
+        <label style="font-size:0.85rem; font-weight:bold;">عدد الحصص الأسبوعية:</label>
+        <input type="number" id="modal-teacher-lessons" value="10" placeholder="10">
+
+        <label style="font-size:0.85rem; font-weight:bold;">حدد القاعات المرتبطة بالمدرس:</label>
+        <div class="checkbox-group" id="modal-halls-list"></div>
+
+        <div style="display:flex; gap:10px; margin-top:10px;">
+          <button class="btn-action btn-green" style="flex:1; justify-content:center;" onclick="saveTeacherData()">💾 حفظ بيانات المدرس</button>
+          <button class="btn-action btn-red" style="padding:8px 15px;" onclick="closeTeacherModal()">إلغاء</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. نافذة إضافة طالب جديد بالتفصيل -->
+    <div class="modal-overlay" id="student-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <span>👤 إضافة طالب جديد</span>
+          <button style="border:none; background:none; font-size:1.2rem; cursor:pointer;" onclick="closeStudentModal()">❌</button>
+        </div>
+
+        <label style="font-size:0.85rem; font-weight:bold;">الاسم الثلاثي للطالب:</label>
+        <input type="text" id="student-fullname" placeholder="مثال: محمد علي حسن">
+
+        <label style="font-size:0.85rem; font-weight:bold;">اختر القاعة الدراسية:</label>
+        <select id="student-hall-select"></select>
+
+        <label style="font-size:0.85rem; font-weight:bold;">الاختصاص / الفرع الدراسي:</label>
+        <select id="student-spec-select">
+          <option value="علمي - أحياء">علمي - أحياء</option>
+          <option value="علمي - تطبيقي">علمي - تطبيقي</option>
+          <option value="أدبي">أدبي</option>
+          <option value="عام / مشترك">عام / مشترك</option>
+        </select>
+
+        <label style="font-size:0.85rem; font-weight:bold;">رقم هاتف ولي الأمر (اختياري):</label>
+        <input type="text" id="student-phone" placeholder="07xxxxxxxx">
+
+        <div style="display:flex; gap:10px; margin-top:10px;">
+          <button class="btn-action btn-green" style="flex:1; justify-content:center;" onclick="saveStudentData()">💾 إضافة الطالب الآن</button>
+          <button class="btn-action btn-red" style="padding:8px 15px;" onclick="closeStudentModal()">إلغاء</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. نافذة تخصيص المدرسين للقاعة -->
+    <div class="modal-overlay" id="hall-teachers-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <span id="hall-teachers-title">👨‍🏫 اختيار مدرسين للقاعة</span>
+          <button style="border:none; background:none; font-size:1.2rem; cursor:pointer;" onclick="closeHallTeachersModal()">❌</button>
+        </div>
+        <p style="font-size:0.85rem; color:#666; margin-bottom:12px;">حدد المدرسين الذين يقدمون المحاضرات داخل هذه القاعة:</p>
+        
+        <div class="checkbox-group" id="hall-teachers-list"></div>
+
+        <div style="display:flex; gap:10px; margin-top:10px;">
+          <button class="btn-action btn-blue" style="flex:1; justify-content:center;" onclick="saveHallTeachers()">💾 حفظ المدرسين المحددين</button>
+          <button class="btn-action btn-red" style="padding:8px 15px;" onclick="closeHallTeachersModal()">إلغاء</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- بوابة تسجيل الدخول -->
+    <div id="login-view">
+      <h2 style="margin-bottom: 15px;">تسجيل الدخول للمنصة</h2>
+      <div class="login-tabs">
+        <button class="tab-btn active" id="tab-admin" onclick="switchLoginTab('admin')">🔑 لوحة المدير</button>
+        <button class="tab-btn" id="tab-teacher" onclick="switchLoginTab('teacher')">👨‍🏫 دخول المدرس</button>
+      </div>
+
+      <!-- دخول المدير -->
+      <div id="admin-login-form">
+        <label style="display:block; text-align:right; font-weight:bold; margin-bottom:5px;">كلمة مرور المدير:</label>
+        <input type="password" id="admin-pass-input" placeholder="ادخل كلمة المرور">
+        <button class="btn-action btn-blue" style="width:100%; justify-content:center; margin-bottom: 10px;" onclick="loginAsAdmin()">دخول مدير النظام</button>
+      </div>
+
+      <!-- دخول المدرس -->
+      <div id="teacher-login-form" style="display:none;">
+        <label style="display:block; text-align:right; font-weight:bold; margin-bottom:5px;">اكتب اسمك الثلاثي كما مسجل بالمدرسة:</label>
+        <input type="text" id="teacher-name-input" placeholder="أدخل الاسم الثلاثي بالكامل">
+        <button class="btn-action btn-green" style="width:100%; justify-content:center;" onclick="loginAsTeacher()">دخول لوحة المدرس</button>
+      </div>
+    </div>
+    
+    <!-- القائمة الرئيسية للمدير -->
+    <div id="main-view" style="display:none;">
+      <h2 class="section-title">لوحة التحكم المركزية للمدرسة</h2>
+      <div class="modules-grid">
+        <div class="color-box box-teachers" onclick="openView('teachers-view')">
+          <div><h3><span>👨‍🏫</span> إدارة المدرسين والتخصصات</h3><p>عرض البيانات، الحصص، القاعات وسجل الدرجات</p></div>
+        </div>
+        <div class="color-box box-students" onclick="openView('students-view')">
+          <div><h3><span>🏛️</span> إدارة الطلاب القاعات والاختصاص</h3><p>إضافة الأسماء الثلاثية والتخصص والمدرسين لكل قاعة</p></div>
+        </div>
+        <div class="color-box box-grades" onclick="openView('grades-view')">
+          <div><h3><span>📊</span> سجل الدرجات الشامل (PDF)</h3><p>رصد المواد وتصدير سجل الدرجات الإلكتروني</p></div>
+        </div>
+        <div class="color-box box-reports" onclick="openView('reports-view')">
+          <div><h3><span>📈</span> التقارير والنتائج العامة</h3><p>تصدير النتائج الشاملة والأوائل</p></div>
+        </div>
+        <div class="color-box box-settings" onclick="openView('settings-view')">
+          <div><h3><span>⚙️</span> إعدادات المنصة والبوت</h3><p>ضبط اسم المدرسة، السحابة، والتليجرام</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. إدارة المدرسين الشاملة -->
+    <div id="teachers-view" class="view-section">
+      <div class="section-title">
+        <span>👨‍🏫 دليل الكادر التدريسي الشامل</span>
+        <button class="back-btn" onclick="closeView('teachers-view')">رجوع ↩</button>
+      </div>
+      <div class="controls-bar">
+        <button class="btn-action btn-blue" onclick="openAddTeacherModal()">➕ إضافة مدرس جديد ومعلومات القاعات</button>
+      </div>
+      <div class="card-grid" id="teachers-container"></div>
+    </div>
+
+    <!-- 2. إدارة القاعات المربوطة بالطلاب والمدرسين والاختصاص -->
+    <div id="students-view" class="view-section">
+      <div class="section-title">
+        <span>🏛️ إدارة القاعات، الطلاب والاختصاصات</span>
+        <button class="back-btn" onclick="closeView('students-view')">رجوع ↩</button>
+      </div>
+      <div class="controls-bar">
+        <button class="btn-action btn-blue" onclick="addCustomHall()">➕ إضافة قاعة دراسية جديدة</button>
+        <button class="btn-action btn-green" onclick="openAddStudentModal()">👤 إضافة طالب جديد (اسم ثلاثي واختصاص)</button>
+      </div>
+      <div class="card-grid" id="halls-container"></div>
+    </div>
+
+    <!-- 3. سجل الدرجات الشامل -->
+    <div id="grades-view" class="view-section">
+      <div class="section-title">
+        <span id="grades-title-text">📊 سجل الدرجات التفاعلي والربط المباشر</span>
+        <button class="back-btn" id="grades-back-btn" onclick="closeView('grades-view')">رجوع ↩</button>
+      </div>
+      <div class="controls-bar">
+        <label style="width:auto; margin:0;">القاعة: </label>
+        <select id="grade-hall-select" style="width:auto; margin:0;" onchange="loadGradeTable()"></select>
+
+        <span id="admin-grade-controls" style="display:inline-flex; gap:10px; align-items:center;">
+          <label style="width:auto; margin:0;">نوع العرض: </label>
+          <select id="grade-view-type" style="width:auto; margin:0;" onchange="loadGradeTable()">
+            <option value="subject">سجل المدرس (عرض مادة واحدة)</option>
+            <option value="all_subjects">سجل القاعة الشامل (كافة المواد)</option>
+          </select>
+
+          <label id="subject-select-label" style="width:auto; margin:0;">المادة / المدرس: </label>
+          <select id="grade-subject-select" style="width:auto; margin:0;" onchange="loadGradeTable()"></select>
+        </span>
+
+        <button class="btn-action btn-red" onclick="exportGradesPDF()">📄 تصدير السجل إلى PDF</button>
+      </div>
+
+      <div class="table-container" id="grades-pdf-area">
+        <div id="pdf-header" style="display:none; text-align:center; margin-bottom:15px; padding:10px; border-bottom:2px solid #4318FF;">
+          <h2 id="pdf-school-name" style="color:#4318FF;"></h2>
+          <h3 id="pdf-subject-title" style="color:#333; margin-top:5px;"></h3>
+        </div>
+        <table id="grades-table-element">
+          <thead id="grades-table-head"></thead>
+          <tbody id="grades-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 4. التقارير والنتائج -->
+    <div id="reports-view" class="view-section">
+      <div class="section-title">
+        <span>📈 النتائج والتقارير العامة وإصدار الأوائل</span>
+        <button class="back-btn" onclick="closeView('reports-view')">رجوع ↩</button>
+      </div>
+      <div class="controls-bar">
+        <label style="width:auto; margin:0;">القاعة: </label>
+        <select id="report-hall-select" style="width:auto; margin:0;" onchange="generateReport()"></select>
+        <button class="btn-action btn-purple" onclick="window.print()">🖨️ طباعة التقرير</button>
+        <button class="btn-action btn-telegram" onclick="sendReportTelegram()">✈️ إرسال النتائج عبر التليجرام</button>
+      </div>
+      
+      <div id="printable-area">
+        <h3 style="text-align: center; margin-bottom: 15px;">جدول ملخص معدلات القاعة والنتائج</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>اسم الطالب الثلاثي</th>
+                <th>الاختصاص</th>
+                <th>المدرس المشرف</th>
+                <th>معدل السعي لكافة المواد</th>
+                <th>النتيجة العامة</th>
+              </tr>
+            </thead>
+            <tbody id="report-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. إعدادات المنصة -->
+    <div id="settings-view" class="view-section">
+      <div class="section-title">
+        <span>⚙️ إعدادات المنصة المدرسية والسحابة</span>
+        <button class="back-btn" onclick="closeView('settings-view')">رجوع ↩</button>
+      </div>
+      
+      <div class="settings-group">
+        <label>اسم المدرسة / المنصة التعليمية:</label>
+        <input type="text" id="set-school-name" placeholder="أدخل اسم المدرسة">
+      </div>
+
+      <hr style="margin: 20px 0; opacity: 0.2;">
+      <h3 style="margin-bottom: 15px; color: #0088cc;">✈️ إعدادات بوت التليجرام المركزي للمدرسة</h3>
+      
+      <div class="settings-group">
+        <label>توكن البوت (Telegram Bot Token):</label>
+        <input type="text" id="set-telegram-token" placeholder="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ">
+      </div>
+
+      <div class="settings-group">
+        <label>معرّف قناة المدرّسين / الإدارة (Chat ID):</label>
+        <input type="text" id="set-telegram-chatid" placeholder="-1001234567890 أو @channel_name">
+      </div>
+
+      <button class="btn-action btn-green" onclick="saveSettings()">💾 حفظ الإعدادات العامة</button>
+      <hr style="margin: 20px 0; opacity: 0.2;">
+      <button class="btn-action btn-red" onclick="resetDatabase()">⚠️ إعادة ضبط وتفريغ جميع بيانات المدرسة</button>
+    </div>
+
+  </main>
+
+  <script>
+    let currentUserRole = null;
+    let currentTeacherObj = null;
+    let editingTeacherIndex = null;
+    let activeHallForTeachers = null;
+
+    let schoolDB = JSON.parse(localStorage.getItem('school_master_db')) || {
+      settings: {
+        schoolName: "المنصة المدرسية الإلكترونية",
+        adminPass: "1987",
+        telegramToken: "",
+        telegramChatId: ""
+      },
+      teachers: [],
+      halls: {},
+      hallTeachersMap: {}
+    };
+
+    if (!schoolDB.settings) schoolDB.settings = {};
+    if (!schoolDB.settings.adminPass) schoolDB.settings.adminPass = "1987";
+    if (!schoolDB.hallTeachersMap) schoolDB.hallTeachersMap = {};
+
+    function saveData() {
+      localStorage.setItem('school_master_db', JSON.stringify(schoolDB));
+      updateDashboardStats();
+    }
+
+    function updateDashboardStats() {
+      document.getElementById('header-school').textContent = "🏫 " + (schoolDB.settings.schoolName || "المدرسة الإلكترونية");
+      document.getElementById('count-teachers').textContent = schoolDB.teachers.length;
+      document.getElementById('count-halls').textContent = Object.keys(schoolDB.halls).length;
+
+      let totalStudents = 0;
+      Object.values(schoolDB.halls).forEach(list => totalStudents += list.length);
+      document.getElementById('count-students').textContent = totalStudents;
+
+      document.getElementById('set-school-name').value = schoolDB.settings.schoolName || "";
+      document.getElementById('set-telegram-token').value = schoolDB.settings.telegramToken || "";
+      document.getElementById('set-telegram-chatid').value = schoolDB.settings.telegramChatId || "";
+    }
+
+    document.getElementById('current-date').textContent = new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    function toggleTheme() { document.body.classList.toggle('dark-mode'); }
+
+    function switchLoginTab(type) {
+      document.getElementById('tab-admin').classList.remove('active');
+      document.getElementById('tab-teacher').classList.remove('active');
+      document.getElementById('admin-login-form').style.display = 'none';
+      document.getElementById('teacher-login-form').style.display = 'none';
+
+      if (type === 'admin') {
+        document.getElementById('tab-admin').classList.add('active');
+        document.getElementById('admin-login-form').style.display = 'block';
+      } else {
+        document.getElementById('tab-teacher').classList.add('active');
+        document.getElementById('teacher-login-form').style.display = 'block';
+      }
+    }
+
+    function loginAsAdmin() {
+      const pass = document.getElementById('admin-pass-input').value;
+      if (pass === schoolDB.settings.adminPass || pass === "1987") {
+        currentUserRole = 'admin';
+        document.getElementById('login-view').style.display = 'none';
+        document.getElementById('main-view').style.display = 'block';
+        document.getElementById('stats-header').style.display = 'grid';
+        document.getElementById('logout-btn').style.display = 'inline-block';
+        document.getElementById('current-user-badge').textContent = '🔑 مدير النظام';
+      } else {
+        alert("كلمة مرور المدير غير صحيحة!");
+      }
+    }
+
+    function loginAsTeacher() {
+      const inputName = document.getElementById('teacher-name-input').value.trim();
+      if (!inputName) { alert("يرجى كتابة الاسم الثلاثي!"); return; }
+
+      const teacher = schoolDB.teachers.find(t => t.name.replace(/أ\.|أستاذ|أستاذة/g, '').trim() === inputName.replace(/أ\.|أستاذ|أستاذة/g, '').trim());
+
+      if (teacher) {
+        currentTeacherObj = teacher;
+        currentUserRole = 'teacher';
+
+        document.getElementById('login-view').style.display = 'none';
+        document.getElementById('stats-header').style.display = 'none';
+        document.getElementById('logout-btn').style.display = 'inline-block';
+        document.getElementById('current-user-badge').textContent = `👨‍🏫 المدرس: ${currentTeacherObj.name} (${currentTeacherObj.subject})`;
+
+        openView('grades-view');
+      } else {
+        alert("الاسم غير مسجل ضمن كادر المدرسة الحالي! يرجى التأكد من إضافة المدرس من قبل مدير النظام أولاً.");
+      }
+    }
+
+    function logout() {
+      currentUserRole = null;
+      currentTeacherObj = null;
+      document.getElementById('admin-pass-input').value = '';
+      document.getElementById('teacher-name-input').value = '';
+      document.getElementById('logout-btn').style.display = 'none';
+      document.getElementById('stats-header').style.display = 'none';
+      document.getElementById('main-view').style.display = 'none';
+      document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
+      document.getElementById('login-view').style.display = 'block';
+      document.getElementById('current-user-badge').textContent = 'يرجى تسجيل الدخول';
+    }
+
+    function openView(id) {
+      document.getElementById('main-view').style.display = 'none';
+      document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+
+      if(id === 'teachers-view') renderTeachers();
+      if(id === 'students-view') renderHalls();
+      if(id === 'grades-view') setupGradesViewRole();
+      if(id === 'reports-view') updateDropdown('report-hall-select');
+    }
+
+    function closeView(id) {
+      document.getElementById(id).style.display = 'none';
+      if (currentUserRole === 'admin') {
+        document.getElementById('main-view').style.display = 'block';
+      } else {
+        logout();
+      }
+    }
+
+    function setupGradesViewRole() {
+      updateDropdown('grade-hall-select');
+      const adminControls = document.getElementById('admin-grade-controls');
+      const backBtn = document.getElementById('grades-back-btn');
+
+      if (currentUserRole === 'teacher') {
+        adminControls.style.display = 'none';
+        backBtn.textContent = 'خروج 🚪';
+        document.getElementById('grades-title-text').textContent = `📊 رصد درجات مادة (${currentTeacherObj.subject}) - المدرس: ${currentTeacherObj.name}`;
+      } else {
+        adminControls.style.display = 'inline-flex';
+        backBtn.textContent = 'رجوع ↩';
+        document.getElementById('grades-title-text').textContent = '📊 سجل الدرجات التفاعلي والربط المباشر';
+        updateTeachersDropdown('grade-subject-select');
+      }
+      loadGradeTable();
+    }
+
+    function updateDropdown(selectId) {
+      const select = document.getElementById(selectId);
+      select.innerHTML = '<option value="">-- اختر القاعة --</option>';
+      Object.keys(schoolDB.halls).forEach(hall => select.innerHTML += `<option value="${hall}">${hall}</option>`);
+    }
+
+    function updateTeachersDropdown(selectId) {
+      const select = document.getElementById(selectId);
+      select.innerHTML = '<option value="">-- اختر المادة / المدرس --</option>';
+      schoolDB.teachers.forEach(t => select.innerHTML += `<option value="${t.subject}">${t.subject} (${t.name})</option>`);
+    }
+
+    function renderTeachers() {
+      const container = document.getElementById('teachers-container');
+      container.innerHTML = '';
+      if (schoolDB.teachers.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#888; grid-column: 1/-1;">لا يوجد مدرسون مضافون حالياً. اضغط على "إضافة مدرس جديد".</p>';
+        return;
+      }
+
+      schoolDB.teachers.forEach((t, index) => {
+        let associatedHalls = new Set(t.assignedHalls || []);
+        
+        for (const [hallName, students] of Object.entries(schoolDB.halls)) {
+          students.forEach(s => {
+            if (s.assignedTeacher === t.name || (s.grades && s.grades[t.subject])) {
+              associatedHalls.add(hallName);
+            }
+          });
+        }
+
+        let hallsMarkup = Array.from(associatedHalls).map(h => `<span class="hall-tag">${h}</span>`).join(' ') || '<span style="color:#aaa; font-size:0.8rem;">غير مرتبط بقاعة بعد</span>';
+
+        container.innerHTML += `
+          <div class="item-card">
+            <h3 style="color:#4318FF; margin-bottom:10px;">👨‍🏫 ${t.name}</h3>
+            <ul class="teacher-info-list">
+              <li><span>📘 الاختصاص / المادة:</span> <b>${t.subject}</b></li>
+              <li>
+                <span>⏳ عدد الحصص بالاسبوع:</span> 
+                <input type="number" value="${t.weeklyLessons || 0}" style="width:60px; padding:2px; text-align:center;" onchange="updateTeacherLessons(${index}, this.value)">
+              </li>
+              <li><span>🏛️ القاعات المرتبطة:</span> <div>${hallsMarkup}</div></li>
+            </ul>
+
+            <div style="display:flex; gap:6px; margin-top:12px;">
+              <button class="btn-action btn-blue" style="padding:6px 10px; font-size:0.8rem;" onclick="openEditTeacherModal(${index})">✏️ تعديل</button>
+              <button class="btn-action btn-purple" style="flex:1; justify-content:center; font-size:0.8rem;" onclick="goToTeacherGrades('${t.subject}')">📊 سجل الدرجات</button>
+              <button class="btn-action btn-red" style="padding:6px 10px; font-size:0.8rem;" onclick="deleteTeacher(${index})">🗑️ حذف</button>
+            </div>
+          </div>`;
+      });
+    }
+
+    function openAddTeacherModal() {
+      editingTeacherIndex = null;
+      document.getElementById('modal-title').textContent = '👨‍🏫 إضافة مدرس جديد';
+      document.getElementById('modal-teacher-name').value = '';
+      document.getElementById('modal-teacher-subject').value = '';
+      document.getElementById('modal-teacher-lessons').value = '10';
+      renderModalHallsCheckboxes([]);
+      document.getElementById('teacher-modal').style.display = 'flex';
+    }
+
+    function openEditTeacherModal(index) {
+      editingTeacherIndex = index;
+      const t = schoolDB.teachers[index];
+      document.getElementById('modal-title').textContent = '✏️ تعديل بيانات المدرس والقاعات';
+      document.getElementById('modal-teacher-name').value = t.name;
+      document.getElementById('modal-teacher-subject').value = t.subject;
+      document.getElementById('modal-teacher-lessons').value = t.weeklyLessons || 0;
+      renderModalHallsCheckboxes(t.assignedHalls || []);
+      document.getElementById('teacher-modal').style.display = 'flex';
+    }
+
+    function closeTeacherModal() {
+      document.getElementById('teacher-modal').style.display = 'none';
+    }
+
+    function renderModalHallsCheckboxes(selectedHalls) {
+      const container = document.getElementById('modal-halls-list');
+      container.innerHTML = '';
+      const hallKeys = Object.keys(schoolDB.halls);
+
+      if (hallKeys.length === 0) {
+        container.innerHTML = '<span style="color:#999; font-size:0.8rem;">لا توجد قاعات دراسية مضافة حتى الآن. يمكنك إضافة قاعات من قسم القاعات أولاً.</span>';
+        return;
+      }
+
+      hallKeys.forEach(hall => {
+        const isChecked = selectedHalls.includes(hall) ? 'checked' : '';
+        container.innerHTML += `
+          <label class="checkbox-item">
+            <input type="checkbox" value="${hall}" ${isChecked}>
+            <span>${hall}</span>
+          </label>`;
+      });
+    }
+
+    function saveTeacherData() {
+      const name = document.getElementById('modal-teacher-name').value.trim();
+      const subject = document.getElementById('modal-teacher-subject').value.trim();
+      const lessons = parseInt(document.getElementById('modal-teacher-lessons').value) || 0;
+      
+      const checkedHalls = [];
+      document.querySelectorAll('#modal-halls-list input[type="checkbox"]:checked').forEach(cb => {
+        checkedHalls.push(cb.value);
+      });
+
+      if (!name || !subject) {
+        alert("يرجى إدخال اسم المدرس والتخصص المطلوب!");
+        return;
+      }
+
+      const isDuplicateName = schoolDB.teachers.some((t, index) => {
+        return t.name.trim().toLowerCase() === name.toLowerCase() && index !== editingTeacherIndex;
+      });
+
+      if (isDuplicateName) {
+        alert("⚠️ اسم المدرس موجود بالفعل في القائمة! يرجى إدخال اسم مختلف أو إضافة لقب للتمييز.");
+        return;
+      }
+
+      if (editingTeacherIndex !== null) {
+        schoolDB.teachers[editingTeacherIndex].name = name;
+        schoolDB.teachers[editingTeacherIndex].subject = subject;
+        schoolDB.teachers[editingTeacherIndex].weeklyLessons = lessons;
+        schoolDB.teachers[editingTeacherIndex].assignedHalls = checkedHalls;
+      } else {
+        schoolDB.teachers.push({
+          id: "t_" + Date.now(),
+          name: name,
+          subject: subject,
+          weeklyLessons: lessons,
+          assignedHalls: checkedHalls
+        });
+      }
+
+      saveData();
+      closeTeacherModal();
+      renderTeachers();
+    }
+
+    function openAddStudentModal() {
+      updateDropdown('student-hall-select');
+      document.getElementById('student-fullname').value = '';
+      document.getElementById('student-phone').value = '';
+      document.getElementById('student-modal').style.display = 'flex';
+    }
+
+    function closeStudentModal() {
+      document.getElementById('student-modal').style.display = 'none';
+    }
+
+    function saveStudentData() {
+      const name = document.getElementById('student-fullname').value.trim();
+      const hall = document.getElementById('student-hall-select').value;
+      const spec = document.getElementById('student-spec-select').value;
+      const phone = document.getElementById('student-phone').value.trim();
+
+      if (!name || !hall) {
+        alert("يرجى كتابة اسم الطالب الثلاثي واختيار القاعة الدراسية!");
+        return;
+      }
+
+      if (!schoolDB.halls[hall]) schoolDB.halls[hall] = [];
+
+      schoolDB.halls[hall].push({
+        name: name,
+        spec: spec,
+        phone: phone,
+        assignedTeacher: "",
+        grades: {}
+      });
+
+      saveData();
+      closeStudentModal();
+      renderHalls();
+      alert(`تم إضافة الطالب (${name}) بنجاح إلى (${hall})!`);
+    }
+
+    function openHallTeachersModal(hall) {
+      activeHallForTeachers = hall;
+      document.getElementById('hall-teachers-title').textContent = `👨‍🏫 مدرسو قاعة: (${hall})`;
+      
+      const container = document.getElementById('hall-teachers-list');
+      container.innerHTML = '';
+
+      if (schoolDB.teachers.length === 0) {
+        container.innerHTML = '<span style="color:#888; font-size:0.85rem;">لا يوجد مدرسون مضافون في النظام بعد.</span>';
+      } else {
+        const assignedTeachers = schoolDB.hallTeachersMap[hall] || [];
+        schoolDB.teachers.forEach(t => {
+          const isChecked = assignedTeachers.includes(t.name) ? 'checked' : '';
+          container.innerHTML += `
+            <label class="checkbox-item">
+              <input type="checkbox" value="${t.name}" ${isChecked}>
+              <span>${t.name} (<b>${t.subject}</b>)</span>
+            </label>`;
+        });
+      }
+
+      document.getElementById('hall-teachers-modal').style.display = 'flex';
+    }
+
+    function closeHallTeachersModal() {
+      document.getElementById('hall-teachers-modal').style.display = 'none';
+    }
+
+    function saveHallTeachers() {
+      if (!activeHallForTeachers) return;
+
+      const checkedTeachers = [];
+      const selectedSubjects = new Set();
+      let hasDuplicateSubject = false;
+      let duplicateSubjectName = "";
+
+      document.querySelectorAll('#hall-teachers-list input[type="checkbox"]:checked').forEach(cb => {
+        const teacherName = cb.value;
+        const teacherObj = schoolDB.teachers.find(t => t.name === teacherName);
+
+        if (teacherObj) {
+          if (selectedSubjects.has(teacherObj.subject)) {
+            hasDuplicateSubject = true;
+            duplicateSubjectName = teacherObj.subject;
+          } else {
+            selectedSubjects.add(teacherObj.subject);
+            checkedTeachers.push(teacherName);
+          }
+        }
+      });
+
+      if (hasDuplicateSubject) {
+        alert(`⚠️ لا يمكن تخصيص أكثر من مدرس لنفس المادة/الاختصاص (${duplicateSubjectName}) داخل القاعة الواحدة!`);
+        return;
+      }
+
+      schoolDB.hallTeachersMap[activeHallForTeachers] = checkedTeachers;
+      saveData();
+      closeHallTeachersModal();
+      renderHalls();
+    }
+
+    function updateTeacherLessons(index, val) {
+      schoolDB.teachers[index].weeklyLessons = parseInt(val) || 0;
+      saveData();
+    }
+
+    function goToTeacherGrades(subject) {
+      openView('grades-view');
+      document.getElementById('grade-view-type').value = 'subject';
+      document.getElementById('grade-subject-select').value = subject;
+      loadGradeTable();
+    }
+
+    function deleteTeacher(index) {
+      if(confirm("هل أنت تأكد من حذف المدرس من الكادر؟")) {
+        schoolDB.teachers.splice(index, 1);
+        saveData();
+        renderTeachers();
+      }
+    }
+
+    function renderHalls() {
+      const container = document.getElementById('halls-container');
+      container.innerHTML = '';
+      const hallKeys = Object.keys(schoolDB.halls);
+
+      if (hallKeys.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#888; grid-column: 1/-1;">لا توجد قاعات دراسية مضافة. اضغط على "إضافة قاعة جديدة".</p>';
+        return;
+      }
+
+      for (const [hall, students] of Object.entries(schoolDB.halls)) {
+        let assignedTeachersList = schoolDB.hallTeachersMap[hall] || [];
+        let teachersTags = assignedTeachersList.length > 0 
+          ? assignedTeachersList.map(t => `<span class="hall-tag">${t}</span>`).join(' ') 
+          : '<span style="color:#aaa; font-size:0.75rem;">لم يحدد مدرسون بعد</span>';
+
+        let studentsList = students.map((s, idx) => {
+          let teacherOptions = `<option value="">-- بدون مشرف خاص --</option>`;
+          schoolDB.teachers.forEach(t => {
+            const isSelected = (s.assignedTeacher === t.name) ? 'selected' : '';
+            teacherOptions += `<option value="${t.name}" ${isSelected}>${t.name} (${t.subject})</option>`;
+          });
+
+          return `
+          <div class="student-item">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <b style="font-size:0.88rem;">👤 ${s.name}</b>
+                <span class="spec-tag">${s.spec || 'عام'}</span>
+              </div>
+              <button onclick="removeStudent('${hall}', ${idx})" style="color:red; border:none; background:none; cursor:pointer;">❌</button>
+            </div>
+            ${s.phone ? `<div style="font-size:0.75rem; color:#666; margin-top:2px;">📞 ${s.phone}</div>` : ''}
+            <div style="margin-top:5px;">
+              <select style="font-size:0.75rem; padding:4px; margin-bottom:0;" onchange="assignTeacherToStudent('${hall}', ${idx}, this.value)">
+                ${teacherOptions}
+              </select>
+            </div>
+          </div>`;
+        }).join('');
+
+        container.innerHTML += `
+          <div class="item-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <h4>🏛️ ${hall}</h4>
+              <button class="btn-action btn-red" style="padding:2px 6px; font-size:0.7rem;" onclick="deleteHall('${hall}')">حذف القاعة</button>
+            </div>
+
+            <div style="margin-bottom:8px;">
+              <div style="font-size:0.8rem; font-weight:bold; margin-bottom:3px;">👨‍🏫 كادر مدرسين القاعة:</div>
+              <div>${teachersTags}</div>
+              <button class="btn-action btn-purple" style="padding:3px 8px; font-size:0.75rem; margin-top:5px;" onclick="openHallTeachersModal('${hall}')">✏️ تعيين مدرسين للقاعة</button>
+            </div>
+
+            <p style="font-size:0.8rem; color:#666; margin-bottom:8px;">إجمالي الطلاب: <b>${students.length}</b></p>
+            
+            <label class="btn-action btn-green" style="width:100%; justify-content:center; font-size:0.75rem; margin-bottom:8px;">
+              📥 استيراد طلاب من ملف Excel
+              <input type="file" accept=".xlsx, .xls" style="display:none" onchange="handleHallExcel(event, '${hall}')">
+            </label>
+
+            <label style="font-size:0.8rem; font-weight:bold; display:block; margin-bottom:4px;">إدخال سريع لأسماء الطلاب الثلاثية:</label>
+            <textarea id="bulk-students-${hall}" rows="2" style="width:100%; font-size:0.8rem; margin-bottom:6px;" placeholder="ضع أسماء الطلاب تفصلها فارزة أو سطر جديد..."></textarea>
+            <button class="btn-action btn-blue" style="width:100%; justify-content:center; font-size:0.75rem; margin-bottom:10px;" onclick="addBulkStudents('${hall}')">💾 حفظ الأسماء السريعة</button>
+
+            <div style="max-height:180px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;">
+              ${studentsList || '<small style="color:#aaa;">لا يوجد طلاب مخصصين بعد</small>'}
+            </div>
+          </div>`;
+      }
+    }
+
+    function assignTeacherToStudent(hall, studentIdx, teacherName) {
+      schoolDB.halls[hall][studentIdx].assignedTeacher = teacherName;
+      saveData();
+    }
+
+    function addCustomHall() {
+      const hall = prompt("اسم القاعة الدراسية الجديدة (مثال: قاعة 1، قاعة 2):");
+      if(hall && !schoolDB.halls[hall]) {
+        schoolDB.halls[hall] = [];
+        saveData();
+        renderHalls();
+      }
+    }
+
+    function handleHallExcel(e, hall) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const data = new Uint8Array(evt.target.result);
+        const workbook = XLSX.read(data, {type: 'array'});
+        const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+        
+        let addedCount = 0;
+        jsonData.forEach(row => {
+          const name = row['اسم الطالب'] || row['الاسم'] || row['الاسم الثلاثي'] || row['Name'];
+          const spec = row['الاختصاص'] || row['الفرع'] || 'عام';
+          const phone = row['الهاتف'] || row['رقم الهاتف'] || row['Phone'] || '';
+
+          if (name) {
+            schoolDB.halls[hall].push({
+              name: name.toString().trim(),
+              spec: spec.toString().trim(),
+              phone: phone.toString().trim(),
+              assignedTeacher: "",
+              grades: {}
+            });
+            addedCount++;
+          }
+        });
+
+        saveData();
+        renderHalls();
+        alert(`تم رفع الملف واستيراد ${addedCount} طالب بنجاح إلى (${hall})!`);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function addBulkStudents(hall) {
+      const input = document.getElementById(`bulk-students-${hall}`).value.trim();
+      if (!input) return;
+
+      const names = input.split(/[\n,]+/).map(n => n.trim()).filter(n => n.length > 0);
+      names.forEach(name => {
+        schoolDB.halls[hall].push({ name, spec: "عام", phone: "", assignedTeacher: "", grades: {} });
+      });
+
+      saveData();
+      renderHalls();
+      alert(`تم إضافة ${names.length} طالب إلى ${hall} بنجاح!`);
+    }
+
+    function deleteHall(hall) {
+      if(confirm(`حذف (${hall}) مع طلابها؟`)) {
+        delete schoolDB.halls[hall];
+        delete schoolDB.hallTeachersMap[hall];
+        saveData();
+        renderHalls();
+      }
+    }
+
+    function removeStudent(hall, idx) {
+      schoolDB.halls[hall].splice(idx, 1);
+      saveData();
+      renderHalls();
+    }
+
+    /* =========================================================
+       تحسين دالة تحميل وتحديث سجل الدرجات (حل مشكلة الفوكس والحفظ المباشر)
+       ========================================================= */
+    function loadGradeTable() {
+      const hall = document.getElementById('grade-hall-select').value;
+      const viewType = (currentUserRole === 'teacher') ? 'subject' : document.getElementById('grade-view-type').value;
+      const subjectSelect = document.getElementById('grade-subject-select');
+      const subjectLabel = document.getElementById('subject-select-label');
+      
+      const thead = document.getElementById('grades-table-head');
+      const tbody = document.getElementById('grades-table-body');
+
+      if (currentUserRole === 'admin') {
+        if (viewType === 'all_subjects') {
+          subjectSelect.style.display = 'none';
+          subjectLabel.style.display = 'none';
+        } else {
+          subjectSelect.style.display = 'inline-block';
+          subjectLabel.style.display = 'inline-block';
+        }
+      }
+
+      thead.innerHTML = '';
+      tbody.innerHTML = '';
+
+      if(!hall || !schoolDB.halls[hall]) {
+        tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px; color:#a0aec0;">يرجى اختيار القاعة والمادة لعرض السجل التفاعلي</td></tr>';
+        return;
+      }
+
+      // 1. عرض سجل المدرس (عرض مادة واحدة)
+      if (viewType === 'subject') {
+        const subject = (currentUserRole === 'teacher') ? currentTeacherObj.subject : subjectSelect.value;
+        if (!subject) {
+          tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px; color:#a0aec0;">يرجى اختيار المادة الدراسية لعرض الدرجات</td></tr>';
+          return;
+        }
+
+        thead.innerHTML = `
+          <tr>
+            <th rowspan="2" style="width:40px;">#</th>
+            <th rowspan="2" style="min-width:180px; text-align:right;">اسم الطالب الثلاثي</th>
+            <th rowspan="2" style="width:100px;">الاختصاص</th>
+            <th colspan="3" class="group-header">الفصل الأول</th>
+            <th rowspan="2" class="midterm-header" style="width:80px;">نصف السنة</th>
+            <th colspan="3" class="group-header">الفصل الثاني</th>
+            <th rowspan="2" class="final-header" style="width:90px;">السعي السنوي</th>
+          </tr>
+          <tr>
+            <th style="width:65px;">شهر 1</th>
+            <th style="width:65px;">شهر 2</th>
+            <th style="width:75px; background:rgba(0,0,0,0.15);">المعدل</th>
+            <th style="width:65px;">شهر 1</th>
+            <th style="width:65px;">شهر 2</th>
+            <th style="width:75px; background:rgba(0,0,0,0.15);">المعدل</th>
+          </tr>`;
+
+        schoolDB.halls[hall].forEach((student, idx) => {
+          if(!student.grades) student.grades = {};
+          if(!student.grades[subject]) student.grades[subject] = { m1:0, m2:0, mid:0, m3:0, m4:0 };
+          const g = student.grades[subject];
+
+          const term1 = Math.round(((g.m1||0) + (g.m2||0)) / 2);
+          const term2 = Math.round(((g.m3||0) + (g.m4||0)) / 2);
+          const annual = Math.round((term1 + (g.mid||0) + term2) / 3);
+          const isPass = annual >= 50;
+
+          tbody.innerHTML += `
+            <tr id="row-${idx}">
+              <td><b>${idx + 1}</b></td>
+              <td style="text-align:right;"><b>${student.name}</b></td>
+              <td><span class="spec-tag">${student.spec || 'عام'}</span></td>
+              
+              <!-- الفصل الأول -->
+              <td><input type="number" class="grade-input" value="${g.m1||0}" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'm1', this.value, this)"></td>
+              <td><input type="number" class="grade-input" value="${g.m2||0}" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'm2', this.value, this)"></td>
+              <td><span class="calc-val term1-val">${term1}</span></td>
+
+              <!-- نصف السنة -->
+              <td><input type="number" class="grade-input midterm-input" value="${g.mid||0}" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'mid', this.value, this)"></td>
+
+              <!-- الفصل الثاني -->
+              <td><input type="number" class="grade-input" value="${g.m3||0}" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'm3', this.value, this)"></td>
+              <td><input type="number" class="grade-input" value="${g.m4||0}" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'm4', this.value, this)"></td>
+              <td><span class="calc-val term2-val">${term2}</span></td>
+
+              <!-- السعي السنوي النهائي -->
+              <td>
+                <span class="annual-badge ${isPass ? 'badge-pass' : 'badge-fail'} annual-val">
+                  ${annual}
+                </span>
+              </td>
+            </tr>`;
+        });
+
+      } else {
+        // 2. عرض سجل القاعة الشامل (كافة المواد)
+        const subjectsList = schoolDB.teachers.map(t => t.subject);
+        
+        if (subjectsList.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:#a0aec0;">لا توجد مواد أو مدرسين مضافين للنظام بعد.</td></tr>';
+          return;
+        }
+
+        let subHeaders = '';
+        subjectsList.forEach(s => { subHeaders += `<th style="min-width:90px;">${s}</th>`; });
+
+        thead.innerHTML = `
+          <tr>
+            <th style="width:40px;">#</th>
+            <th style="min-width:180px; text-align:right;">اسم الطالب الثلاثي</th>
+            <th style="width:100px;">الاختصاص</th>
+            ${subHeaders}
+            <th style="width:100px; background:#2b12b3;">المعدل العام</th>
+            <th style="width:90px; background:#00b894;">النتيجة</th>
+          </tr>`;
+
+        schoolDB.halls[hall].forEach((student, idx) => {
+          let totalAnnual = 0, countSubjects = 0, cols = '';
+
+          subjectsList.forEach(s => {
+            const g = (student.grades && student.grades[s]) ? student.grades[s] : {m1:0, m2:0, mid:0, m3:0, m4:0};
+            const term1 = ((g.m1||0) + (g.m2||0)) / 2;
+            const term2 = ((g.m3||0) + (g.m4||0)) / 2;
+            const ann = Math.round((term1 + (g.mid||0) + term2) / 3);
+            
+            if(student.grades && student.grades[s]) {
+              totalAnnual += ann;
+              countSubjects++;
+            }
+            cols += `<td><b style="color:${ann>=50?'#2b3674':'#EE5D50'}">${ann}</b></td>`;
+          });
+
+          const finalAvg = countSubjects ? Math.round(totalAnnual / countSubjects) : 0;
+          const isPass = finalAvg >= 50;
+
+          tbody.innerHTML += `
+            <tr>
+              <td><b>${idx + 1}</b></td>
+              <td style="text-align:right;"><b>${student.name}</b></td>
+              <td><span class="spec-tag">${student.spec || 'عام'}</span></td>
+              ${cols}
+              <td><b style="color:#4318FF; font-size:1.05rem;">${finalAvg}</b></td>
+              <td>
+                <span class="annual-badge ${isPass ? 'badge-pass' : 'badge-fail'}" style="font-size:0.8rem; padding:3px 8px;">
+                  ${isPass ? 'ناجح' : 'راسب'}
+                </span>
+              </td>
+            </tr>`;
+        });
+      }
+    }
+
+    /* إصلاح دالة تحديث الدرجة لمنع إعادة الـ Render والعمل بسلاسة */
+    function updateGrade(hall, idx, subject, field, val, inputElem) {
+      if(!schoolDB.halls[hall][idx].grades) schoolDB.halls[hall][idx].grades = {};
+      if(!schoolDB.halls[hall][idx].grades[subject]) schoolDB.halls[hall][idx].grades[subject] = { m1:0, m2:0, mid:0, m3:0, m4:0 };
+      
+      let num = parseFloat(val);
+      if(isNaN(num) || num < 0) num = 0;
+      if(num > 100) num = 100;
+
+      schoolDB.halls[hall][idx].grades[subject][field] = num;
+      saveData();
+
+      // تحديث قيم السعي والمعدل مباشرة دون إعادة بناء الـ DOM
+      const row = document.getElementById(`row-${idx}`);
+      if (row) {
+        const g = schoolDB.halls[hall][idx].grades[subject];
+        const term1 = Math.round(((g.m1||0) + (g.m2||0)) / 2);
+        const term2 = Math.round(((g.m3||0) + (g.m4||0)) / 2);
+        const annual = Math.round((term1 + (g.mid||0) + term2) / 3);
+
+        const term1Elem = row.querySelector('.term1-val');
+        const term2Elem = row.querySelector('.term2-val');
+        const annualElem = row.querySelector('.annual-val');
+
+        if(term1Elem) term1Elem.textContent = term1;
+        if(term2Elem) term2Elem.textContent = term2;
+        if(annualElem) {
+          annualElem.textContent = annual;
+          annualElem.className = `annual-badge ${annual >= 50 ? 'badge-pass' : 'badge-fail'} annual-val`;
+        }
+      }
+    }
+
+    function exportGradesPDF() {
+      const hall = document.getElementById('grade-hall-select').value;
+      const viewType = (currentUserRole === 'teacher') ? 'subject' : document.getElementById('grade-view-type').value;
+      const subject = (currentUserRole === 'teacher') ? currentTeacherObj.subject : document.getElementById('grade-subject-select').value;
+      
+      if (!hall) { alert("يرجى اختيار القاعة أولاً!"); return; }
+
+      const header = document.getElementById('pdf-header');
+      document.getElementById('pdf-school-name').textContent = schoolDB.settings.schoolName;
+      document.getElementById('pdf-subject-title').textContent = viewType === 'subject' 
+        ? `سجل درجات مادة (${subject}) - القاعة: ${hall}`
+        : `السجل العام والربط الشامل - القاعة: ${hall}`;
+      
+      header.style.display = 'block';
+
+      const element = document.getElementById('grades-pdf-area');
+      const opt = {
+        margin: 0.3,
+        filename: `سجل_درجات_${hall}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+      };
+
+      html2pdf().set(opt).from(element).save().then(() => {
+        header.style.display = 'none';
+      });
+    }
+
+    function generateReport() {
+      const hall = document.getElementById('report-hall-select').value;
+      const tbody = document.getElementById('report-table-body');
+      tbody.innerHTML = '';
+      if(!hall || !schoolDB.halls[hall]) return;
+
+      schoolDB.halls[hall].forEach(s => {
+        let totalAnnual = 0, countSubjects = 0;
+        if(s.grades) {
+          for (const [subj, g] of Object.entries(s.grades)) {
+            const ann = (((g.m1||0)+(g.m2||0))/2 + (g.mid||0) + ((g.m3||0)+(g.m4||0))/2) / 3;
+            totalAnnual += ann;
+            countSubjects++;
+          }
+        }
+        const finalAvg = countSubjects ? Math.round(totalAnnual / countSubjects) : 0;
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${s.name}</td>
+            <td><span class="spec-tag">${s.spec || 'عام'}</span></td>
+            <td>${s.assignedTeacher || 'غير محدد'}</td>
+            <td><b>${finalAvg}</b></td>
+            <td style="color:${finalAvg>=50?'green':'red'}; font-weight:bold">${finalAvg>=50?'ناجح':'راسب'}</td>
+          </tr>`;
+      });
+    }
+
+    function sendReportTelegram() {
+      const hall = document.getElementById('report-hall-select').value;
+      const token = schoolDB.settings.telegramToken;
+      const chatId = schoolDB.settings.telegramChatId;
+
+      if (!token || !chatId) { alert("يرجى ضبط توكن البوت ومعرف القناة في الإعدادات!"); return; }
+      if (!hall) { alert("اختر القاعة أولاً!"); return; }
+
+      let msg = `🏫 *تقرير المدرسة الإلكترونية الشامل*\n🏛️ *القاعة:* ${hall}\n------------------------------\n`;
+
+      schoolDB.halls[hall].forEach((s, idx) => {
+        let totalAnnual = 0, countSubjects = 0;
+        if(s.grades) {
+          for (const [subj, g] of Object.entries(s.grades)) {
+            const ann = (((g.m1||0)+(g.m2||0))/2 + (g.mid||0) + ((g.m3||0)+(g.m4||0))/2) / 3;
+            totalAnnual += ann;
+            countSubjects++;
+          }
+        }
+        const finalAvg = countSubjects ? Math.round(totalAnnual / countSubjects) : 0;
+        msg += `${idx + 1}. *${s.name}* (${s.spec || 'عام'}) ⬅️ المعدل العام: *${finalAvg}*\n`;
+      });
+
+      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chatId, text: msg, parse_mode: 'Markdown' })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.ok) alert("تم إرسال التقرير إلى التليجرام بنجاح! 🚀");
+        else alert("خطأ في الإرسال: " + data.description);
+      });
+    }
+
+    function saveSettings() {
+      schoolDB.settings.schoolName = document.getElementById('set-school-name').value || "المنصة المدرسية الإلكترونية";
+      schoolDB.settings.telegramToken = document.getElementById('set-telegram-token').value.trim();
+      schoolDB.settings.telegramChatId = document.getElementById('set-telegram-chatid').value.trim();
+      
+      saveData();
+      alert("تم حفظ إعدادات المنصة واسم المدرسة بنجاح!");
+    }
+
+    function resetDatabase() {
+      if(confirm("تحذير: هل تريد مسح جميع بيانات المنصة والمدرسة؟")) {
+        localStorage.removeItem('school_master_db');
+        location.reload();
+      }
+    }
+
+    updateDashboardStats();
+  </script>
+</body>
+</html>
