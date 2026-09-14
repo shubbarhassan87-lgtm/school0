@@ -6,7 +6,6 @@
   <title>منصة المدرسة الإلكترونية الشاملة</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
       --bg-color: #f4f7fe;
@@ -100,7 +99,7 @@
       box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
     }
     table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.88rem; }
-    th, td { border-bottom: 1px solid #e2e8f0; border-left: 1px solid #e2e8f0; padding: 8px 10px; text-align: center; white-space: nowrap; }
+    th, td { border-bottom: 1px solid #e2e8f0; border-left: 1px solid #e2e8f0; padding: 10px; text-align: center; white-space: nowrap; }
     th:last-child, td:last-child { border-left: none; }
     
     th { 
@@ -110,32 +109,21 @@
       top: 0; 
       z-index: 2; 
       font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.3px;
+      font-size: 0.88rem;
     }
-    th.group-header { background: #2b12b3; border-bottom: 1px solid rgba(255,255,255,0.2); }
-    th.midterm-header { background: #7F00FF; }
-    th.final-header { background: #00b894; }
 
     tbody tr:nth-child(even) { background-color: rgba(67, 24, 255, 0.02); }
     tbody tr:hover { background-color: rgba(67, 24, 255, 0.05); }
 
     .grade-input {
-      width: 58px; text-align: center; border-radius: 8px;
-      border: 1.5px solid #dcdfe6; padding: 5px; margin-bottom: 0;
-      font-weight: 700; font-size: 0.9rem; transition: all 0.2s ease; background: #fff;
+      width: 75px; text-align: center; border-radius: 8px;
+      border: 1.5px solid #dcdfe6; padding: 6px; margin-bottom: 0;
+      font-weight: 700; font-size: 0.95rem; transition: all 0.2s ease; background: #fff;
     }
     body.dark-mode .grade-input { background: #0b1437; border-color: #2b3674; color: #fff; }
     .grade-input:focus { border-color: #4318FF; outline: none; box-shadow: 0 0 0 3px rgba(67, 24, 255, 0.15); }
     .grade-input.midterm-input { border-color: #7F00FF; background-color: #fcf8ff; }
     body.dark-mode .grade-input.midterm-input { background-color: #1a0b36; }
-
-    .calc-val {
-      font-weight: 700; color: #718096; background: #edf2f7;
-      padding: 4px 8px; border-radius: 6px; display: inline-block;
-      min-width: 42px; font-size: 0.85rem;
-    }
-    body.dark-mode .calc-val { background: #1a234d; color: #a0aec0; }
 
     .annual-badge {
       font-size: 0.9rem; font-weight: 800; padding: 4px 10px;
@@ -143,7 +131,6 @@
     }
     .badge-pass { background: #e6fffa; color: #047857; border: 1px solid #b2f5ea; }
     .badge-fail { background: #fff5f5; color: #e53e3e; border: 1px solid #fed7d7; }
-    .badge-exempt { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
 
     .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 15px; }
     .item-card { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: 15px; padding: 18px; box-shadow: var(--card-shadow); }
@@ -174,6 +161,19 @@
     .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; max-height: 120px; overflow-y: auto; padding: 10px; border: 1px solid #e0e5f2; border-radius: 10px; margin-bottom: 15px; }
     .checkbox-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; background: rgba(0,0,0,0.03); padding: 5px 10px; border-radius: 8px; }
     .checkbox-item input { width: auto; margin-bottom: 0; }
+
+    /* تنسيقات حصرية للطباعة وتصدير PDF بدون نصوص مقلوبة */
+    @media print {
+      body * { visibility: hidden; }
+      #grades-pdf-area, #grades-pdf-area * { visibility: visible; }
+      #grades-pdf-area {
+        position: absolute; left: 0; top: 0; width: 100%;
+        max-height: none !important; overflow: visible !important;
+      }
+      .controls-bar, .top-header, .login-overlay, .back-btn, .header-btns { display: none !important; }
+      .grade-input { border: none !important; background: transparent !important; text-align: center; }
+      th { background-color: #4318FF !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
   </style>
 </head>
 <body>
@@ -301,7 +301,7 @@
           <div><h3><span>🏛️</span> إدارة الطلاب القاعات والاختصاص</h3><p>إضافة الأسماء الثلاثية والتخصص والمدرسين لكل قاعة</p></div>
         </div>
         <div class="color-box box-grades" onclick="openView('grades-view')">
-          <div><h3><span>📊</span> سجل الدرجات الشامل (PDF / Excel)</h3><p>رصد المواد ونظام الإعفاء وتصدير السجل</p></div>
+          <div><h3><span>📊</span> سجل الدرجات الشامل (PDF / Excel)</h3><p>رصد الدرجات وتصدير السجل بشكل كامل</p></div>
         </div>
         <div class="color-box box-reports" onclick="openView('reports-view')">
           <div><h3><span>📈</span> التقارير والنتائج العامة</h3><p>تصدير النتائج الشاملة والأوائل</p></div>
@@ -359,7 +359,7 @@
         </span>
 
         <button class="btn-action btn-green" onclick="exportGradesExcel()">📊 تصدير السجل إلى Excel</button>
-        <button class="btn-action btn-red" onclick="exportGradesPDF()">📄 تصدير السجل إلى PDF</button>
+        <button class="btn-action btn-red" onclick="exportGradesPDF()">📄 تصدير / طباعة PDF مباشر</button>
       </div>
 
       <div class="table-container" id="grades-pdf-area">
@@ -396,7 +396,7 @@
                 <th>الاختصاص</th>
                 <th>المدرس المشرف</th>
                 <th>معدل السعي لكافة المواد</th>
-                <th>حالة الإعفاء / النتيجة</th>
+                <th>النتيجة</th>
               </tr>
             </thead>
             <tbody id="report-table-body"></tbody>
@@ -726,7 +726,6 @@
         });
       }
 
-      // ربط وتطبيق القاعات المحددة في الخريطة
       checkedHalls.forEach(hall => {
         if (!schoolDB.hallTeachersMap[hall]) schoolDB.hallTeachersMap[hall] = [];
         if (!schoolDB.hallTeachersMap[hall].includes(name)) {
@@ -773,7 +772,6 @@
         spec: spec,
         phone: phone,
         assignedTeacher: "",
-        isExempt: false,
         grades: {}
       });
 
@@ -841,7 +839,6 @@
 
       schoolDB.hallTeachersMap[activeHallForTeachers] = checkedTeachers;
 
-      // مزامنة المدرسين مع كادر المدرسين الرئيسي
       checkedTeachers.forEach(tName => {
         const tObj = schoolDB.teachers.find(t => t.name === tName);
         if (tObj) {
@@ -872,7 +869,6 @@
     function deleteTeacher(index) {
       if(confirm("هل أنت تأكد من حذف المدرس من الكادر؟")) {
         const tName = schoolDB.teachers[index].name;
-        // حذف الإسناد من الخريطة
         Object.keys(schoolDB.hallTeachersMap).forEach(h => {
           schoolDB.hallTeachersMap[h] = schoolDB.hallTeachersMap[h].filter(item => item !== tName);
         });
@@ -911,7 +907,6 @@
               <div>
                 <b style="font-size:0.88rem;">👤 ${s.name}</b>
                 <span class="spec-tag">${s.spec || 'عام'}</span>
-                ${s.isExempt ? '<span class="badge-exempt" style="font-size:0.7rem; padding:1px 4px;">معفى</span>' : ''}
               </div>
               <button onclick="removeStudent('${hall}', ${idx})" style="color:red; border:none; background:none; cursor:pointer;">❌</button>
             </div>
@@ -969,7 +964,6 @@
       }
     }
 
-    /* معالجة ملفات الأكسل الكبيرة باستخدام نظام Batching */
     function handleHallExcel(e, hall) {
       const file = e.target.files[0];
       if (!file) return;
@@ -1007,7 +1001,6 @@
                   spec: spec.toString().trim(),
                   phone: phone.toString().trim(),
                   assignedTeacher: "",
-                  isExempt: false,
                   grades: {}
                 });
                 addedCount++;
@@ -1038,7 +1031,7 @@
 
       const names = input.split(/[\n,]+/).map(n => n.trim()).filter(n => n.length > 0);
       names.forEach(name => {
-        schoolDB.halls[hall].push({ name, spec: "عام", phone: "", assignedTeacher: "", isExempt: false, grades: {} });
+        schoolDB.halls[hall].push({ name, spec: "عام", phone: "", assignedTeacher: "", grades: {} });
       });
 
       saveData();
@@ -1061,13 +1054,7 @@
       renderHalls();
     }
 
-    function toggleExemption(hall, idx) {
-      const student = schoolDB.halls[hall][idx];
-      student.isExempt = !student.isExempt;
-      saveData();
-      loadGradeTable();
-    }
-
+    /* كود جدول الدرجات التفاعلي المباشر (سعي الفصل الأول | نصف السنة | سعي الفصل الثاني | السعي السنوي) */
     function loadGradeTable() {
       const hall = document.getElementById('grade-hall-select').value;
       const thead = document.getElementById('grades-table-head');
@@ -1098,74 +1085,58 @@
       tbody.innerHTML = '';
 
       if(!hall || !schoolDB.halls[hall]) {
-        tbody.innerHTML = '<tr><td colspan="13" style="text-align:center; padding:20px; color:#a0aec0;">يرجى اختيار القاعة والمادة لعرض السجل التفاعلي</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#a0aec0;">يرجى اختيار القاعة والمادة لعرض السجل التفاعلي</td></tr>';
         return;
       }
 
       if (viewType === 'subject') {
         if (!subject) {
-          tbody.innerHTML = '<tr><td colspan="13" style="text-align:center; padding:20px; color:#a0aec0;">يرجى اختيار المادة الدراسية لعرض الدرجات</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#a0aec0;">يرجى اختيار المادة الدراسية لعرض الدرجات</td></tr>';
           return;
         }
 
         thead.innerHTML = `
           <tr>
-            <th rowspan="2" style="width:40px;">#</th>
-            <th rowspan="2" style="min-width:180px; text-align:right;">اسم الطالب الثلاثي</th>
-            <th rowspan="2" style="width:100px;">الاختصاص</th>
-            <th rowspan="2" style="width:70px;">الإعفاء</th>
-            <th colspan="3" class="group-header">الفصل الأول</th>
-            <th rowspan="2" class="midterm-header" style="width:80px;">نصف السنة</th>
-            <th colspan="3" class="group-header">الفصل الثاني</th>
-            <th rowspan="2" class="final-header" style="width:90px;">السعي السنوي</th>
-          </tr>
-          <tr>
-            <th style="width:65px;">شهر 1</th>
-            <th style="width:65px;">شهر 2</th>
-            <th style="width:75px; background:rgba(0,0,0,0.15);">المعدل</th>
-            <th style="width:65px;">شهر 1</th>
-            <th style="width:65px;">شهر 2</th>
-            <th style="width:75px; background:rgba(0,0,0,0.15);">المعدل</th>
+            <th style="width:40px;">#</th>
+            <th style="min-width:200px; text-align:right;">اسم الطالب الثلاثي</th>
+            <th style="width:100px;">الاختصاص</th>
+            <th style="width:110px;">سعي الفصل الأول</th>
+            <th style="width:110px; background:#7F00FF;">نصف السنة</th>
+            <th style="width:110px;">سعي الفصل الثاني</th>
+            <th style="width:110px; background:#00b894;">السعي السنوي</th>
           </tr>`;
 
         schoolDB.halls[hall].forEach((student, idx) => {
           if(!student.grades) student.grades = {};
-          if(!student.grades[subject]) student.grades[subject] = { m1:0, m2:0, mid:0, m3:0, m4:0 };
+          if(!student.grades[subject]) student.grades[subject] = { term1: null, mid: null, term2: null };
+          
           const g = student.grades[subject];
 
-          const term1 = Math.round(((g.m1||0) + (g.m2||0)) / 2);
-          const term2 = Math.round(((g.m3||0) + (g.m4||0)) / 2);
-          
-          // حاسبة الإعفاء والسعي وفق الضوابط (إذا كان معفى يحسب معدل الفصلين بدون الامتحان النهائي/نصف السنة إن وجد)
-          let annual = 0;
-          if (student.isExempt) {
-            annual = Math.round((term1 + term2) / 2);
-          } else {
-            annual = Math.round((term1 + (g.mid||0) + term2) / 3);
-          }
-          
+          const val1 = (g.term1 !== null && g.term1 !== undefined) ? g.term1 : '';
+          const valMid = (g.mid !== null && g.mid !== undefined) ? g.mid : '';
+          const val2 = (g.term2 !== null && g.term2 !== undefined) ? g.term2 : '';
+
+          const n1 = parseFloat(val1) || 0;
+          const nMid = parseFloat(valMid) || 0;
+          const n2 = parseFloat(val2) || 0;
+
+          const annual = Math.round((n1 + nMid + n2) / 3);
+          const hasData = (val1 !== '' || valMid !== '' || val2 !== '');
           const isPass = annual >= 50;
-          const badgeClass = student.isExempt ? 'badge-exempt' : (isPass ? 'badge-pass' : 'badge-fail');
-          const statusText = student.isExempt ? `معفى (${annual})` : annual;
+          const badgeClass = isPass ? 'badge-pass' : 'badge-fail';
+          const statusText = hasData ? annual : '-';
 
           tbody.innerHTML += `
             <tr id="row-${idx}">
               <td><b>${idx + 1}</b></td>
               <td style="text-align:right;"><b>${student.name}</b></td>
               <td><span class="spec-tag">${student.spec || 'عام'}</span></td>
-              <td>
-                <input type="checkbox" ${student.isExempt ? 'checked' : ''} onchange="toggleExemption('${hall}', ${idx})" title="تحديد كطالب معفى">
-              </td>
 
-              <td><input type="number" class="grade-input" value="${g.m1||0}" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'm1', this.value, this)"></td>
-              <td><input type="number" class="grade-input" value="${g.m2||0}" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'm2', this.value, this)"></td>
-              <td><span class="calc-val term1-val">${term1}</span></td>
+              <td><input type="number" class="grade-input" value="${val1}" placeholder="" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'term1', this.value)"></td>
 
-              <td><input type="number" class="grade-input midterm-input" value="${g.mid||0}" min="0" max="100" ${student.isExempt ? 'disabled style="opacity:0.5;"' : ''} oninput="updateGrade('${hall}', ${idx}, '${subject}', 'mid', this.value, this)"></td>
+              <td><input type="number" class="grade-input midterm-input" value="${valMid}" placeholder="" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'mid', this.value)"></td>
 
-              <td><input type="number" class="grade-input" value="${g.m3||0}" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'm3', this.value, this)"></td>
-              <td><input type="number" class="grade-input" value="${g.m4||0}" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'm4', this.value, this)"></td>
-              <td><span class="calc-val term2-val">${term2}</span></td>
+              <td><input type="number" class="grade-input" value="${val2}" placeholder="" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'term2', this.value)"></td>
 
               <td>
                 <span class="annual-badge ${badgeClass} annual-val">
@@ -1179,7 +1150,7 @@
         const subjectsList = schoolDB.teachers.map(t => t.subject);
         
         if (subjectsList.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#a0aec0;">لا توجد مواد أو مدرسين مضافين للنظام بعد.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:#a0aec0;">لا توجد مواد أو مدرسين مضافين للنظام بعد.</td></tr>';
           return;
         }
 
@@ -1200,16 +1171,12 @@
           let totalAnnual = 0, countSubjects = 0, cols = '';
 
           subjectsList.forEach(s => {
-            const g = (student.grades && student.grades[s]) ? student.grades[s] : {m1:0, m2:0, mid:0, m3:0, m4:0};
-            const term1 = ((g.m1||0) + (g.m2||0)) / 2;
-            const term2 = ((g.m3||0) + (g.m4||0)) / 2;
+            const g = (student.grades && student.grades[s]) ? student.grades[s] : { term1: null, mid: null, term2: null };
             
-            let ann = 0;
-            if (student.isExempt) {
-              ann = Math.round((term1 + term2) / 2);
-            } else {
-              ann = Math.round((term1 + (g.mid||0) + term2) / 3);
-            }
+            const n1 = parseFloat(g.term1) || 0;
+            const nMid = parseFloat(g.mid) || 0;
+            const n2 = parseFloat(g.term2) || 0;
+            const ann = Math.round((n1 + nMid + n2) / 3);
             
             if(student.grades && student.grades[s]) {
               totalAnnual += ann;
@@ -1229,8 +1196,8 @@
               ${cols}
               <td><b style="color:#4318FF; font-size:1.05rem;">${finalAvg}</b></td>
               <td>
-                <span class="annual-badge ${student.isExempt ? 'badge-exempt' : (isPass ? 'badge-pass' : 'badge-fail')}" style="font-size:0.8rem; padding:3px 8px;">
-                  ${student.isExempt ? 'معفى' : (isPass ? 'ناجح' : 'راسب')}
+                <span class="annual-badge ${isPass ? 'badge-pass' : 'badge-fail'}" style="font-size:0.8rem; padding:3px 8px;">
+                  ${isPass ? 'ناجح' : 'راسب'}
                 </span>
               </td>
             </tr>`;
@@ -1238,46 +1205,41 @@
       }
     }
 
-    function updateGrade(hall, idx, subject, field, val, inputElem) {
+    function updateGrade(hall, idx, subject, field, val) {
       if(!schoolDB.halls[hall][idx].grades) schoolDB.halls[hall][idx].grades = {};
-      if(!schoolDB.halls[hall][idx].grades[subject]) schoolDB.halls[hall][idx].grades[subject] = { m1:0, m2:0, mid:0, m3:0, m4:0 };
+      if(!schoolDB.halls[hall][idx].grades[subject]) schoolDB.halls[hall][idx].grades[subject] = { term1: null, mid: null, term2: null };
       
-      let num = parseFloat(val);
-      if(isNaN(num) || num < 0) num = 0;
-      if(num > 100) num = 100;
-
-      schoolDB.halls[hall][idx].grades[subject][field] = num;
+      if (val === "" || val === null) {
+        schoolDB.halls[hall][idx].grades[subject][field] = null;
+      } else {
+        let num = parseFloat(val);
+        if(isNaN(num) || num < 0) num = 0;
+        if(num > 100) num = 100;
+        schoolDB.halls[hall][idx].grades[subject][field] = num;
+      }
+      
       saveData();
 
       const row = document.getElementById(`row-${idx}`);
       if (row) {
         const student = schoolDB.halls[hall][idx];
         const g = student.grades[subject];
-        const term1 = Math.round(((g.m1||0) + (g.m2||0)) / 2);
-        const term2 = Math.round(((g.m3||0) + (g.m4||0)) / 2);
         
-        let annual = 0;
-        if (student.isExempt) {
-          annual = Math.round((term1 + term2) / 2);
-        } else {
-          annual = Math.round((term1 + (g.mid||0) + term2) / 3);
-        }
+        const n1 = parseFloat(g.term1) || 0;
+        const nMid = parseFloat(g.mid) || 0;
+        const n2 = parseFloat(g.term2) || 0;
+        const annual = Math.round((n1 + nMid + n2) / 3);
 
-        const term1Elem = row.querySelector('.term1-val');
-        const term2Elem = row.querySelector('.term2-val');
         const annualElem = row.querySelector('.annual-val');
-
-        if(term1Elem) term1Elem.textContent = term1;
-        if(term2Elem) term2Elem.textContent = term2;
         if(annualElem) {
-          const badgeClass = student.isExempt ? 'badge-exempt' : (annual >= 50 ? 'badge-pass' : 'badge-fail');
-          annualElem.textContent = student.isExempt ? `معفى (${annual})` : annual;
+          const hasData = (g.term1 !== null || g.mid !== null || g.term2 !== null);
+          const badgeClass = annual >= 50 ? 'badge-pass' : 'badge-fail';
+          annualElem.textContent = hasData ? annual : '-';
           annualElem.className = `annual-badge ${badgeClass} annual-val`;
         }
       }
     }
 
-    /* تصدير جدول الدرجات الحالي إلى ملف Excel */
     function exportGradesExcel() {
       const hall = document.getElementById('grade-hall-select').value;
       if (!hall || !schoolDB.halls[hall]) {
@@ -1301,26 +1263,22 @@
         if (!subject) { alert("يرجى اختيار المادة!"); return; }
 
         schoolDB.halls[hall].forEach((student, idx) => {
-          const g = (student.grades && student.grades[subject]) ? student.grades[subject] : { m1:0, m2:0, mid:0, m3:0, m4:0 };
-          const term1 = Math.round(((g.m1||0) + (g.m2||0)) / 2);
-          const term2 = Math.round(((g.m3||0) + (g.m4||0)) / 2);
+          const g = (student.grades && student.grades[subject]) ? student.grades[subject] : { term1: null, mid: null, term2: null };
           
-          let annual = student.isExempt ? Math.round((term1 + term2) / 2) : Math.round((term1 + (g.mid||0) + term2) / 3);
+          const n1 = parseFloat(g.term1) || 0;
+          const nMid = parseFloat(g.mid) || 0;
+          const n2 = parseFloat(g.term2) || 0;
+          const annual = Math.round((n1 + nMid + n2) / 3);
 
           exportData.push({
             "ت": idx + 1,
             "اسم الطالب الثلاثي": student.name,
             "الاختصاص": student.spec || "عام",
-            "حالة الإعفاء": student.isExempt ? "نعم" : "لا",
-            "شهر 1 (ف1)": g.m1 || 0,
-            "شهر 2 (ف1)": g.m2 || 0,
-            "معدل الفصل الأول": term1,
-            "درجة نصف السنة": student.isExempt ? "معفى" : (g.mid || 0),
-            "شهر 1 (ف2)": g.m3 || 0,
-            "شهر 2 (ف2)": g.m4 || 0,
-            "معدل الفصل الثاني": term2,
+            "سعي الفصل الأول": g.term1 !== null ? g.term1 : "",
+            "درجة نصف السنة": g.mid !== null ? g.mid : "",
+            "سعي الفصل الثاني": g.term2 !== null ? g.term2 : "",
             "السعي السنوي": annual,
-            "النتيجة": student.isExempt ? "معفى" : (annual >= 50 ? "ناجح" : "راسب")
+            "النتيجة": annual >= 50 ? "ناجح" : "راسب"
           });
         });
       } else {
@@ -1330,16 +1288,16 @@
           let row = {
             "ت": idx + 1,
             "اسم الطالب الثلاثي": student.name,
-            "الاختصاص": student.spec || "عام",
-            "حالة الإعفاء": student.isExempt ? "نعم" : "لا"
+            "الاختصاص": student.spec || "عام"
           };
 
           let totalAnnual = 0, countSubjects = 0;
           subjectsList.forEach(s => {
-            const g = (student.grades && student.grades[s]) ? student.grades[s] : {m1:0, m2:0, mid:0, m3:0, m4:0};
-            const term1 = ((g.m1||0) + (g.m2||0)) / 2;
-            const term2 = ((g.m3||0) + (g.m4||0)) / 2;
-            const ann = student.isExempt ? Math.round((term1 + term2) / 2) : Math.round((term1 + (g.mid||0) + term2) / 3);
+            const g = (student.grades && student.grades[s]) ? student.grades[s] : { term1: null, mid: null, term2: null };
+            const n1 = parseFloat(g.term1) || 0;
+            const nMid = parseFloat(g.mid) || 0;
+            const n2 = parseFloat(g.term2) || 0;
+            const ann = Math.round((n1 + nMid + n2) / 3);
 
             row[s] = ann;
             if(student.grades && student.grades[s]) {
@@ -1350,7 +1308,7 @@
 
           const finalAvg = countSubjects ? Math.round(totalAnnual / countSubjects) : 0;
           row["المعدل العام"] = finalAvg;
-          row["النتيجة العامة"] = student.isExempt ? "معفى" : (finalAvg >= 50 ? "ناجح" : "راسب");
+          row["النتيجة العامة"] = finalAvg >= 50 ? "ناجح" : "راسب";
 
           exportData.push(row);
         });
@@ -1367,6 +1325,7 @@
       XLSX.writeFile(workbook, fileName);
     }
 
+    /* طباعة / حفظ مستند PDF دقيق للغة العربية وبدون نصوص مقلوبة */
     function exportGradesPDF() {
       const hall = document.getElementById('grade-hall-select').value;
       let subject = '';
@@ -1388,19 +1347,8 @@
         : `السجل العام والربط الشامل - القاعة: ${hall}`;
       
       header.style.display = 'block';
-
-      const element = document.getElementById('grades-pdf-area');
-      const opt = {
-        margin: [0.3, 0.3, 0.3, 0.3],
-        filename: `سجل_درجات_${hall}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, logging: false },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
-      };
-
-      html2pdf().set(opt).from(element).save().then(() => {
-        header.style.display = 'none';
-      });
+      window.print();
+      setTimeout(() => { header.style.display = 'none'; }, 1000);
     }
 
     function generateReport() {
@@ -1413,16 +1361,17 @@
         let totalAnnual = 0, countSubjects = 0;
         if(s.grades) {
           for (const [subj, g] of Object.entries(s.grades)) {
-            const term1 = ((g.m1||0)+(g.m2||0))/2;
-            const term2 = ((g.m3||0)+(g.m4||0))/2;
-            const ann = s.isExempt ? (term1 + term2)/2 : (term1 + (g.mid||0) + term2) / 3;
+            const n1 = parseFloat(g.term1) || 0;
+            const nMid = parseFloat(g.mid) || 0;
+            const n2 = parseFloat(g.term2) || 0;
+            const ann = (n1 + nMid + n2) / 3;
             totalAnnual += ann;
             countSubjects++;
           }
         }
         const finalAvg = countSubjects ? Math.round(totalAnnual / countSubjects) : 0;
-        const resultLabel = s.isExempt ? 'معفى عام' : (finalAvg >= 50 ? 'ناجح' : 'راسب');
-        const resultColor = s.isExempt ? '#0369a1' : (finalAvg >= 50 ? 'green' : 'red');
+        const resultLabel = finalAvg >= 50 ? 'ناجح' : 'راسب';
+        const resultColor = finalAvg >= 50 ? 'green' : 'red';
 
         tbody.innerHTML += `
           <tr>
@@ -1451,6 +1400,11 @@
         location.reload();
       }
     }
+
+    updateDashboardStats();
+  </script>
+</body>
+</html>
 
     updateDashboardStats();
   </script>
