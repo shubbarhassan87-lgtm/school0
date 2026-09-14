@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -27,6 +26,21 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
     body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 40px; transition: 0.3s; }
 
+    /* شاشة تسجيل الدخول */
+    .login-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(135deg, #11047A 0%, #4318FF 100%);
+      display: flex; justify-content: center; align-items: center; z-index: 2000;
+      padding: 15px;
+    }
+    .login-box {
+      background: var(--card-bg); width: 100%; max-width: 420px;
+      padding: 30px 25px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    .login-box h2 { font-size: 1.5rem; font-weight: 800; color: #4318FF; margin-bottom: 8px; }
+    .login-box p { font-size: 0.85rem; color: #7090B0; margin-bottom: 20px; }
+
     .top-header {
       background: linear-gradient(135deg, #4318FF 0%, #11047A 100%);
       color: white; padding: 25px 20px;
@@ -44,11 +58,6 @@
 
     .header-btns { position: absolute; top: 15px; left: 15px; display: flex; gap: 8px; }
     .btn-header { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 12px; border-radius: 15px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
-
-    #login-view { max-width: 450px; margin: 40px auto; padding: 30px; background: var(--card-bg); border-radius: 20px; box-shadow: var(--card-shadow); text-align: center; }
-    .login-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-    .tab-btn { flex: 1; padding: 10px; border: none; background: #eee; font-weight: bold; border-radius: 10px; cursor: pointer; color: #555; }
-    .tab-btn.active { background: #4318FF; color: white; }
 
     .container { max-width: 1300px; margin: 25px auto; padding: 0 15px; }
     .section-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
@@ -80,11 +89,9 @@
     .btn-blue { background-color: #4318FF; }
     .btn-purple { background-color: #8e44ad; }
     .btn-red { background-color: #EE5D50; }
-    .btn-telegram { background-color: #0088cc; }
     
     select, input, textarea { padding: 9px 14px; border-radius: 10px; border: 1px solid #e0e5f2; font-family: inherit; background: var(--card-bg); color: var(--text-color); width: 100%; margin-bottom: 10px; }
 
-    /* تنسيقات الجدول المنظم لسجل الدرجات */
     .table-container { 
       overflow-x: auto; 
       max-height: 600px; 
@@ -106,70 +113,37 @@
       font-size: 0.85rem;
       letter-spacing: 0.3px;
     }
-    th.group-header {
-      background: #2b12b3;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-    }
-    th.midterm-header {
-      background: #7F00FF;
-    }
-    th.final-header {
-      background: #00b894;
-    }
+    th.group-header { background: #2b12b3; border-bottom: 1px solid rgba(255,255,255,0.2); }
+    th.midterm-header { background: #7F00FF; }
+    th.final-header { background: #00b894; }
 
     tbody tr:nth-child(even) { background-color: rgba(67, 24, 255, 0.02); }
     tbody tr:hover { background-color: rgba(67, 24, 255, 0.05); }
 
     .grade-input {
-      width: 58px;
-      text-align: center;
-      border-radius: 8px;
-      border: 1.5px solid #dcdfe6;
-      padding: 5px;
-      margin-bottom: 0;
-      font-weight: 700;
-      font-size: 0.9rem;
-      transition: all 0.2s ease;
-      background: #fff;
+      width: 58px; text-align: center; border-radius: 8px;
+      border: 1.5px solid #dcdfe6; padding: 5px; margin-bottom: 0;
+      font-weight: 700; font-size: 0.9rem; transition: all 0.2s ease; background: #fff;
     }
-    body.dark-mode .grade-input {
-      background: #0b1437;
-      border-color: #2b3674;
-      color: #fff;
-    }
-    .grade-input:focus {
-      border-color: #4318FF;
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(67, 24, 255, 0.15);
-    }
-    .grade-input.midterm-input {
-      border-color: #7F00FF;
-      background-color: #fcf8ff;
-    }
+    body.dark-mode .grade-input { background: #0b1437; border-color: #2b3674; color: #fff; }
+    .grade-input:focus { border-color: #4318FF; outline: none; box-shadow: 0 0 0 3px rgba(67, 24, 255, 0.15); }
+    .grade-input.midterm-input { border-color: #7F00FF; background-color: #fcf8ff; }
     body.dark-mode .grade-input.midterm-input { background-color: #1a0b36; }
 
     .calc-val {
-      font-weight: 700;
-      color: #718096;
-      background: #edf2f7;
-      padding: 4px 8px;
-      border-radius: 6px;
-      display: inline-block;
-      min-width: 42px;
-      font-size: 0.85rem;
+      font-weight: 700; color: #718096; background: #edf2f7;
+      padding: 4px 8px; border-radius: 6px; display: inline-block;
+      min-width: 42px; font-size: 0.85rem;
     }
     body.dark-mode .calc-val { background: #1a234d; color: #a0aec0; }
 
     .annual-badge {
-      font-size: 1rem;
-      font-weight: 800;
-      padding: 4px 10px;
-      border-radius: 8px;
-      display: inline-block;
-      min-width: 48px;
+      font-size: 0.9rem; font-weight: 800; padding: 4px 10px;
+      border-radius: 8px; display: inline-block; min-width: 48px;
     }
     .badge-pass { background: #e6fffa; color: #047857; border: 1px solid #b2f5ea; }
     .badge-fail { background: #fff5f5; color: #e53e3e; border: 1px solid #fed7d7; }
+    .badge-exempt { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
 
     .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 15px; }
     .item-card { background: var(--card-bg); border: 1px solid #e2e8f0; border-radius: 15px; padding: 18px; box-shadow: var(--card-shadow); }
@@ -178,6 +152,7 @@
     .teacher-info-list li { margin-bottom: 8px; display: flex; justify-content: space-between; border-bottom: 1px dashed #edf2f7; padding-bottom: 5px; }
     .hall-tag { background: #e0e7ff; color: #4318FF; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; margin-left: 4px; display: inline-block; }
     .spec-tag { background: #e6fffa; color: #047857; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
+    .code-badge { background: #fff3bf; color: #d9480f; padding: 3px 8px; border-radius: 6px; font-weight: bold; font-family: monospace; font-size: 0.9rem; border: 1px dashed #fcc419; }
 
     .settings-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; max-width: 450px; }
     .settings-group label { font-weight: bold; font-size: 0.9rem; }
@@ -203,16 +178,29 @@
 </head>
 <body>
 
+  <!-- شاشة تسجيل الدخول -->
+  <div class="login-overlay" id="login-screen">
+    <div class="login-box">
+      <h2 id="login-school-title">🏫 المنصة المدرسية</h2>
+      <p>يرجى إدخال كود الدخول الخاص بك للدخول إلى المنصة</p>
+
+      <label style="font-size:0.85rem; font-weight:bold; display:block; text-align:right; margin-bottom:5px;">كود / رمز الدخول:</label>
+      <input type="password" id="login-pass-input" placeholder="أدخل كود المدرس أو رمز المدير..." style="text-align:center; font-size:1.1rem; letter-spacing:2px;">
+
+      <button class="btn-action btn-blue" style="width:100%; justify-content:center; padding:12px; margin-top:10px;" onclick="handleLogin()">🔓 تسجيل الدخول</button>
+    </div>
+  </div>
+
   <header class="top-header">
     <div class="header-btns">
       <button class="btn-header" onclick="toggleTheme()">🌙 الوضع</button>
-      <button class="btn-header" id="logout-btn" style="display:none; background:#EE5D50;" onclick="logout()">خروج 🚪</button>
+      <button class="btn-header" style="background:rgba(238,93,80,0.3);" onclick="logout()">🚪 خروج</button>
     </div>
     <div class="school-title" id="header-school">🏫 المنصة المدرسية الإلكترونية</div>
     <div style="text-align: center;">
-      <span class="user-badge" id="current-user-badge">يرجى تسجيل الدخول</span>
+      <span class="user-badge" id="current-user-badge">🔑 مدير النظام</span>
     </div>
-    <div class="info-grid" id="stats-header" style="display:none;">
+    <div class="info-grid" id="stats-header">
       <div class="info-item"><span class="label">إجمالي الكادر التدريسي</span><span class="val" id="count-teachers">0</span></div>
       <div class="info-item"><span class="label">إجمالي القاعات الدراسية</span><span class="val" id="count-halls">0</span></div>
       <div class="info-item"><span class="label">إجمالي الطلاب</span><span class="val" id="count-students">0</span></div>
@@ -235,6 +223,9 @@
 
         <label style="font-size:0.85rem; font-weight:bold;">التخصص / المادة الدراسية:</label>
         <input type="text" id="modal-teacher-subject" placeholder="مثال: الكيمياء">
+
+        <label style="font-size:0.85rem; font-weight:bold;">كود دخول المدرس للمنصة (توليد تلقائي):</label>
+        <input type="text" id="modal-teacher-code" placeholder="مثال: T-9842" style="font-weight:bold; color:#4318FF;">
 
         <label style="font-size:0.85rem; font-weight:bold;">عدد الحصص الأسبوعية:</label>
         <input type="number" id="modal-teacher-lessons" value="10" placeholder="10">
@@ -298,48 +289,25 @@
         </div>
       </div>
     </div>
-
-    <!-- بوابة تسجيل الدخول -->
-    <div id="login-view">
-      <h2 style="margin-bottom: 15px;">تسجيل الدخول للمنصة</h2>
-      <div class="login-tabs">
-        <button class="tab-btn active" id="tab-admin" onclick="switchLoginTab('admin')">🔑 لوحة المدير</button>
-        <button class="tab-btn" id="tab-teacher" onclick="switchLoginTab('teacher')">👨‍🏫 دخول المدرس</button>
-      </div>
-
-      <!-- دخول المدير -->
-      <div id="admin-login-form">
-        <label style="display:block; text-align:right; font-weight:bold; margin-bottom:5px;">كلمة مرور المدير:</label>
-        <input type="password" id="admin-pass-input" placeholder="ادخل كلمة المرور">
-        <button class="btn-action btn-blue" style="width:100%; justify-content:center; margin-bottom: 10px;" onclick="loginAsAdmin()">دخول مدير النظام</button>
-      </div>
-
-      <!-- دخول المدرس -->
-      <div id="teacher-login-form" style="display:none;">
-        <label style="display:block; text-align:right; font-weight:bold; margin-bottom:5px;">اكتب اسمك الثلاثي كما مسجل بالمدرسة:</label>
-        <input type="text" id="teacher-name-input" placeholder="أدخل الاسم الثلاثي بالكامل">
-        <button class="btn-action btn-green" style="width:100%; justify-content:center;" onclick="loginAsTeacher()">دخول لوحة المدرس</button>
-      </div>
-    </div>
     
     <!-- القائمة الرئيسية للمدير -->
-    <div id="main-view" style="display:none;">
+    <div id="main-view">
       <h2 class="section-title">لوحة التحكم المركزية للمدرسة</h2>
       <div class="modules-grid">
         <div class="color-box box-teachers" onclick="openView('teachers-view')">
-          <div><h3><span>👨‍🏫</span> إدارة المدرسين والتخصصات</h3><p>عرض البيانات، الحصص، القاعات وسجل الدرجات</p></div>
+          <div><h3><span>👨‍🏫</span> إدارة المدرسين والأكواد</h3><p>إضافة الكادر وتوليد أكواد الدخول والحصص</p></div>
         </div>
         <div class="color-box box-students" onclick="openView('students-view')">
           <div><h3><span>🏛️</span> إدارة الطلاب القاعات والاختصاص</h3><p>إضافة الأسماء الثلاثية والتخصص والمدرسين لكل قاعة</p></div>
         </div>
         <div class="color-box box-grades" onclick="openView('grades-view')">
-          <div><h3><span>📊</span> سجل الدرجات الشامل (PDF)</h3><p>رصد المواد وتصدير سجل الدرجات الإلكتروني</p></div>
+          <div><h3><span>📊</span> سجل الدرجات الشامل (PDF / Excel)</h3><p>رصد المواد ونظام الإعفاء وتصدير السجل</p></div>
         </div>
         <div class="color-box box-reports" onclick="openView('reports-view')">
           <div><h3><span>📈</span> التقارير والنتائج العامة</h3><p>تصدير النتائج الشاملة والأوائل</p></div>
         </div>
         <div class="color-box box-settings" onclick="openView('settings-view')">
-          <div><h3><span>⚙️</span> إعدادات المنصة والبوت</h3><p>ضبط اسم المدرسة، السحابة، والتليجرام</p></div>
+          <div><h3><span>⚙️</span> إعدادات المنصة والرمز</h3><p>تغيير رمز دخول المدير واسم المدرسة</p></div>
         </div>
       </div>
     </div>
@@ -347,11 +315,11 @@
     <!-- 1. إدارة المدرسين الشاملة -->
     <div id="teachers-view" class="view-section">
       <div class="section-title">
-        <span>👨‍🏫 دليل الكادر التدريسي الشامل</span>
+        <span>👨‍🏫 دليل الكادر التدريسي الشامل والأكواد</span>
         <button class="back-btn" onclick="closeView('teachers-view')">رجوع ↩</button>
       </div>
       <div class="controls-bar">
-        <button class="btn-action btn-blue" onclick="openAddTeacherModal()">➕ إضافة مدرس جديد ومعلومات القاعات</button>
+        <button class="btn-action btn-blue" onclick="openAddTeacherModal()">➕ إضافة مدرس جديد وتوليد كود دخول</button>
       </div>
       <div class="card-grid" id="teachers-container"></div>
     </div>
@@ -390,6 +358,7 @@
           <select id="grade-subject-select" style="width:auto; margin:0;" onchange="loadGradeTable()"></select>
         </span>
 
+        <button class="btn-action btn-green" onclick="exportGradesExcel()">📊 تصدير السجل إلى Excel</button>
         <button class="btn-action btn-red" onclick="exportGradesPDF()">📄 تصدير السجل إلى PDF</button>
       </div>
 
@@ -415,7 +384,6 @@
         <label style="width:auto; margin:0;">القاعة: </label>
         <select id="report-hall-select" style="width:auto; margin:0;" onchange="generateReport()"></select>
         <button class="btn-action btn-purple" onclick="window.print()">🖨️ طباعة التقرير</button>
-        <button class="btn-action btn-telegram" onclick="sendReportTelegram()">✈️ إرسال النتائج عبر التليجرام</button>
       </div>
       
       <div id="printable-area">
@@ -428,7 +396,7 @@
                 <th>الاختصاص</th>
                 <th>المدرس المشرف</th>
                 <th>معدل السعي لكافة المواد</th>
-                <th>النتيجة العامة</th>
+                <th>حالة الإعفاء / النتيجة</th>
               </tr>
             </thead>
             <tbody id="report-table-body"></tbody>
@@ -440,7 +408,7 @@
     <!-- 5. إعدادات المنصة -->
     <div id="settings-view" class="view-section">
       <div class="section-title">
-        <span>⚙️ إعدادات المنصة المدرسية والسحابة</span>
+        <span>⚙️ إعدادات المنصة وتغيير الرمز</span>
         <button class="back-btn" onclick="closeView('settings-view')">رجوع ↩</button>
       </div>
       
@@ -449,17 +417,9 @@
         <input type="text" id="set-school-name" placeholder="أدخل اسم المدرسة">
       </div>
 
-      <hr style="margin: 20px 0; opacity: 0.2;">
-      <h3 style="margin-bottom: 15px; color: #0088cc;">✈️ إعدادات بوت التليجرام المركزي للمدرسة</h3>
-      
       <div class="settings-group">
-        <label>توكن البوت (Telegram Bot Token):</label>
-        <input type="text" id="set-telegram-token" placeholder="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ">
-      </div>
-
-      <div class="settings-group">
-        <label>معرّف قناة المدرّسين / الإدارة (Chat ID):</label>
-        <input type="text" id="set-telegram-chatid" placeholder="-1001234567890 أو @channel_name">
+        <label>🔐 تغيير رمز دخول المدير الحالي:</label>
+        <input type="text" id="set-admin-pass" placeholder="أدخل رمز مدير جديد">
       </div>
 
       <button class="btn-action btn-green" onclick="saveSettings()">💾 حفظ الإعدادات العامة</button>
@@ -470,17 +430,14 @@
   </main>
 
   <script>
-    let currentUserRole = null;
-    let currentTeacherObj = null;
     let editingTeacherIndex = null;
     let activeHallForTeachers = null;
+    let currentUser = null;
 
     let schoolDB = JSON.parse(localStorage.getItem('school_master_db')) || {
       settings: {
         schoolName: "المنصة المدرسية الإلكترونية",
-        adminPass: "1987",
-        telegramToken: "",
-        telegramChatId: ""
+        adminPass: "1987"
       },
       teachers: [],
       halls: {},
@@ -498,6 +455,7 @@
 
     function updateDashboardStats() {
       document.getElementById('header-school').textContent = "🏫 " + (schoolDB.settings.schoolName || "المدرسة الإلكترونية");
+      document.getElementById('login-school-title').textContent = "🏫 " + (schoolDB.settings.schoolName || "المنصة المدرسية");
       document.getElementById('count-teachers').textContent = schoolDB.teachers.length;
       document.getElementById('count-halls').textContent = Object.keys(schoolDB.halls).length;
 
@@ -506,112 +464,109 @@
       document.getElementById('count-students').textContent = totalStudents;
 
       document.getElementById('set-school-name').value = schoolDB.settings.schoolName || "";
-      document.getElementById('set-telegram-token').value = schoolDB.settings.telegramToken || "";
-      document.getElementById('set-telegram-chatid').value = schoolDB.settings.telegramChatId || "";
+      document.getElementById('set-admin-pass').value = schoolDB.settings.adminPass || "1987";
     }
 
     document.getElementById('current-date').textContent = new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
 
     function toggleTheme() { document.body.classList.toggle('dark-mode'); }
 
-    function switchLoginTab(type) {
-      document.getElementById('tab-admin').classList.remove('active');
-      document.getElementById('tab-teacher').classList.remove('active');
-      document.getElementById('admin-login-form').style.display = 'none';
-      document.getElementById('teacher-login-form').style.display = 'none';
-
-      if (type === 'admin') {
-        document.getElementById('tab-admin').classList.add('active');
-        document.getElementById('admin-login-form').style.display = 'block';
-      } else {
-        document.getElementById('tab-teacher').classList.add('active');
-        document.getElementById('teacher-login-form').style.display = 'block';
+    function handleLogin() {
+      const pass = document.getElementById('login-pass-input').value.trim();
+      if (!pass) {
+        alert("يرجى إدخال الكود أو الرمز لفتح المنصة!");
+        return;
       }
-    }
 
-    function loginAsAdmin() {
-      const pass = document.getElementById('admin-pass-input').value;
-      if (pass === schoolDB.settings.adminPass || pass === "1987") {
-        currentUserRole = 'admin';
-        document.getElementById('login-view').style.display = 'none';
-        document.getElementById('main-view').style.display = 'block';
-        document.getElementById('stats-header').style.display = 'grid';
-        document.getElementById('logout-btn').style.display = 'inline-block';
+      if (pass === schoolDB.settings.adminPass) {
+        currentUser = { role: 'admin' };
         document.getElementById('current-user-badge').textContent = '🔑 مدير النظام';
-      } else {
-        alert("كلمة مرور المدير غير صحيحة!");
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('main-view').style.display = 'block';
+        document.getElementById('login-pass-input').value = '';
+        return;
       }
-    }
 
-    function loginAsTeacher() {
-      const inputName = document.getElementById('teacher-name-input').value.trim();
-      if (!inputName) { alert("يرجى كتابة الاسم الثلاثي!"); return; }
-
-      const teacher = schoolDB.teachers.find(t => t.name.replace(/أ\.|أستاذ|أستاذة/g, '').trim() === inputName.replace(/أ\.|أستاذ|أستاذة/g, '').trim());
-
+      const teacher = schoolDB.teachers.find(t => t.loginCode === pass);
       if (teacher) {
-        currentTeacherObj = teacher;
-        currentUserRole = 'teacher';
-
-        document.getElementById('login-view').style.display = 'none';
-        document.getElementById('stats-header').style.display = 'none';
-        document.getElementById('logout-btn').style.display = 'inline-block';
-        document.getElementById('current-user-badge').textContent = `👨‍🏫 المدرس: ${currentTeacherObj.name} (${currentTeacherObj.subject})`;
-
-        openView('grades-view');
-      } else {
-        alert("الاسم غير مسجل ضمن كادر المدرسة الحالي! يرجى التأكد من إضافة المدرس من قبل مدير النظام أولاً.");
+        currentUser = { role: 'teacher', teacher: teacher };
+        document.getElementById('current-user-badge').textContent = `👨‍🏫 المدرس: ${teacher.name} (${teacher.subject})`;
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('login-pass-input').value = '';
+        
+        openTeacherDashboard();
+        return;
       }
+
+      alert("❌ رمز الدخول أو الكود غير صحيح!");
     }
 
     function logout() {
-      currentUserRole = null;
-      currentTeacherObj = null;
-      document.getElementById('admin-pass-input').value = '';
-      document.getElementById('teacher-name-input').value = '';
-      document.getElementById('logout-btn').style.display = 'none';
-      document.getElementById('stats-header').style.display = 'none';
+      currentUser = null;
+      document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
+      document.getElementById('main-view').style.display = 'none';
+      document.getElementById('login-screen').style.display = 'flex';
+    }
+
+    function openTeacherDashboard() {
       document.getElementById('main-view').style.display = 'none';
       document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
-      document.getElementById('login-view').style.display = 'block';
-      document.getElementById('current-user-badge').textContent = 'يرجى تسجيل الدخول';
+      
+      openView('grades-view');
+      document.getElementById('grades-back-btn').style.display = 'none';
+      document.getElementById('admin-grade-controls').style.display = 'none';
     }
 
     function openView(id) {
+      if (currentUser && currentUser.role === 'teacher' && id !== 'grades-view') {
+        alert("عذراً، هذه اللوحة مخصصة لإدارة المدير فقط.");
+        return;
+      }
+
       document.getElementById('main-view').style.display = 'none';
       document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
       document.getElementById(id).style.display = 'block';
 
       if(id === 'teachers-view') renderTeachers();
       if(id === 'students-view') renderHalls();
-      if(id === 'grades-view') setupGradesViewRole();
+      if(id === 'grades-view') setupGradesView();
       if(id === 'reports-view') updateDropdown('report-hall-select');
     }
 
     function closeView(id) {
       document.getElementById(id).style.display = 'none';
-      if (currentUserRole === 'admin') {
+      if (currentUser && currentUser.role === 'admin') {
         document.getElementById('main-view').style.display = 'block';
-      } else {
-        logout();
       }
     }
 
-    function setupGradesViewRole() {
-      updateDropdown('grade-hall-select');
-      const adminControls = document.getElementById('admin-grade-controls');
-      const backBtn = document.getElementById('grades-back-btn');
+    function setupGradesView() {
+      if (currentUser && currentUser.role === 'teacher') {
+        const t = currentUser.teacher;
+        document.getElementById('grades-title-text').textContent = `📊 سجل درجات المادة: ${t.subject} (${t.name})`;
+        document.getElementById('admin-grade-controls').style.display = 'none';
+        
+        const select = document.getElementById('grade-hall-select');
+        select.innerHTML = '';
+        let assignedHalls = t.assignedHalls || [];
+        
+        Object.keys(schoolDB.halls).forEach(hall => {
+          if (assignedHalls.includes(hall) || (schoolDB.hallTeachersMap[hall] && schoolDB.hallTeachersMap[hall].includes(t.name))) {
+            select.innerHTML += `<option value="${hall}">${hall}</option>`;
+          }
+        });
 
-      if (currentUserRole === 'teacher') {
-        adminControls.style.display = 'none';
-        backBtn.textContent = 'خروج 🚪';
-        document.getElementById('grades-title-text').textContent = `📊 رصد درجات مادة (${currentTeacherObj.subject}) - المدرس: ${currentTeacherObj.name}`;
+        if (select.options.length === 0) {
+          select.innerHTML = '<option value="">-- غير مخصص لقاعات بعد --</option>';
+        }
       } else {
-        adminControls.style.display = 'inline-flex';
-        backBtn.textContent = 'رجوع ↩';
         document.getElementById('grades-title-text').textContent = '📊 سجل الدرجات التفاعلي والربط المباشر';
+        document.getElementById('admin-grade-controls').style.display = 'inline-flex';
+        document.getElementById('grades-back-btn').style.display = 'inline-block';
+        updateDropdown('grade-hall-select');
         updateTeachersDropdown('grade-subject-select');
       }
+
       loadGradeTable();
     }
 
@@ -627,6 +582,10 @@
       schoolDB.teachers.forEach(t => select.innerHTML += `<option value="${t.subject}">${t.subject} (${t.name})</option>`);
     }
 
+    function generateUniqueTeacherCode() {
+      return "T-" + Math.floor(1000 + Math.random() * 9000);
+    }
+
     function renderTeachers() {
       const container = document.getElementById('teachers-container');
       container.innerHTML = '';
@@ -639,18 +598,25 @@
         let associatedHalls = new Set(t.assignedHalls || []);
         
         for (const [hallName, students] of Object.entries(schoolDB.halls)) {
-          students.forEach(s => {
-            if (s.assignedTeacher === t.name || (s.grades && s.grades[t.subject])) {
-              associatedHalls.add(hallName);
-            }
-          });
+          if (schoolDB.hallTeachersMap[hallName] && schoolDB.hallTeachersMap[hallName].includes(t.name)) {
+            associatedHalls.add(hallName);
+          } else {
+            students.forEach(s => {
+              if (s.assignedTeacher === t.name || (s.grades && s.grades[t.subject])) {
+                associatedHalls.add(hallName);
+              }
+            });
+          }
         }
 
         let hallsMarkup = Array.from(associatedHalls).map(h => `<span class="hall-tag">${h}</span>`).join(' ') || '<span style="color:#aaa; font-size:0.8rem;">غير مرتبط بقاعة بعد</span>';
 
         container.innerHTML += `
           <div class="item-card">
-            <h3 style="color:#4318FF; margin-bottom:10px;">👨‍🏫 ${t.name}</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <h3 style="color:#4318FF;">👨‍🏫 ${t.name}</h3>
+              <span class="code-badge" title="كود دخول المدرس للمنصة">🔑 ${t.loginCode || 'بدون كود'}</span>
+            </div>
             <ul class="teacher-info-list">
               <li><span>📘 الاختصاص / المادة:</span> <b>${t.subject}</b></li>
               <li>
@@ -674,6 +640,7 @@
       document.getElementById('modal-title').textContent = '👨‍🏫 إضافة مدرس جديد';
       document.getElementById('modal-teacher-name').value = '';
       document.getElementById('modal-teacher-subject').value = '';
+      document.getElementById('modal-teacher-code').value = generateUniqueTeacherCode();
       document.getElementById('modal-teacher-lessons').value = '10';
       renderModalHallsCheckboxes([]);
       document.getElementById('teacher-modal').style.display = 'flex';
@@ -685,6 +652,7 @@
       document.getElementById('modal-title').textContent = '✏️ تعديل بيانات المدرس والقاعات';
       document.getElementById('modal-teacher-name').value = t.name;
       document.getElementById('modal-teacher-subject').value = t.subject;
+      document.getElementById('modal-teacher-code').value = t.loginCode || generateUniqueTeacherCode();
       document.getElementById('modal-teacher-lessons').value = t.weeklyLessons || 0;
       renderModalHallsCheckboxes(t.assignedHalls || []);
       document.getElementById('teacher-modal').style.display = 'flex';
@@ -717,6 +685,7 @@
     function saveTeacherData() {
       const name = document.getElementById('modal-teacher-name').value.trim();
       const subject = document.getElementById('modal-teacher-subject').value.trim();
+      const code = document.getElementById('modal-teacher-code').value.trim();
       const lessons = parseInt(document.getElementById('modal-teacher-lessons').value) || 0;
       
       const checkedHalls = [];
@@ -724,8 +693,8 @@
         checkedHalls.push(cb.value);
       });
 
-      if (!name || !subject) {
-        alert("يرجى إدخال اسم المدرس والتخصص المطلوب!");
+      if (!name || !subject || !code) {
+        alert("يرجى إدخال اسم المدرس والتخصص وكود الدخول!");
         return;
       }
 
@@ -738,9 +707,12 @@
         return;
       }
 
+      let oldName = "";
       if (editingTeacherIndex !== null) {
+        oldName = schoolDB.teachers[editingTeacherIndex].name;
         schoolDB.teachers[editingTeacherIndex].name = name;
         schoolDB.teachers[editingTeacherIndex].subject = subject;
+        schoolDB.teachers[editingTeacherIndex].loginCode = code;
         schoolDB.teachers[editingTeacherIndex].weeklyLessons = lessons;
         schoolDB.teachers[editingTeacherIndex].assignedHalls = checkedHalls;
       } else {
@@ -748,10 +720,24 @@
           id: "t_" + Date.now(),
           name: name,
           subject: subject,
+          loginCode: code,
           weeklyLessons: lessons,
           assignedHalls: checkedHalls
         });
       }
+
+      // ربط وتطبيق القاعات المحددة في الخريطة
+      checkedHalls.forEach(hall => {
+        if (!schoolDB.hallTeachersMap[hall]) schoolDB.hallTeachersMap[hall] = [];
+        if (!schoolDB.hallTeachersMap[hall].includes(name)) {
+          if (oldName && schoolDB.hallTeachersMap[hall].includes(oldName)) {
+            const idx = schoolDB.hallTeachersMap[hall].indexOf(oldName);
+            schoolDB.hallTeachersMap[hall][idx] = name;
+          } else {
+            schoolDB.hallTeachersMap[hall].push(name);
+          }
+        }
+      });
 
       saveData();
       closeTeacherModal();
@@ -787,6 +773,7 @@
         spec: spec,
         phone: phone,
         assignedTeacher: "",
+        isExempt: false,
         grades: {}
       });
 
@@ -853,6 +840,18 @@
       }
 
       schoolDB.hallTeachersMap[activeHallForTeachers] = checkedTeachers;
+
+      // مزامنة المدرسين مع كادر المدرسين الرئيسي
+      checkedTeachers.forEach(tName => {
+        const tObj = schoolDB.teachers.find(t => t.name === tName);
+        if (tObj) {
+          if (!tObj.assignedHalls) tObj.assignedHalls = [];
+          if (!tObj.assignedHalls.includes(activeHallForTeachers)) {
+            tObj.assignedHalls.push(activeHallForTeachers);
+          }
+        }
+      });
+
       saveData();
       closeHallTeachersModal();
       renderHalls();
@@ -872,6 +871,11 @@
 
     function deleteTeacher(index) {
       if(confirm("هل أنت تأكد من حذف المدرس من الكادر؟")) {
+        const tName = schoolDB.teachers[index].name;
+        // حذف الإسناد من الخريطة
+        Object.keys(schoolDB.hallTeachersMap).forEach(h => {
+          schoolDB.hallTeachersMap[h] = schoolDB.hallTeachersMap[h].filter(item => item !== tName);
+        });
         schoolDB.teachers.splice(index, 1);
         saveData();
         renderTeachers();
@@ -907,6 +911,7 @@
               <div>
                 <b style="font-size:0.88rem;">👤 ${s.name}</b>
                 <span class="spec-tag">${s.spec || 'عام'}</span>
+                ${s.isExempt ? '<span class="badge-exempt" style="font-size:0.7rem; padding:1px 4px;">معفى</span>' : ''}
               </div>
               <button onclick="removeStudent('${hall}', ${idx})" style="color:red; border:none; background:none; cursor:pointer;">❌</button>
             </div>
@@ -934,9 +939,9 @@
 
             <p style="font-size:0.8rem; color:#666; margin-bottom:8px;">إجمالي الطلاب: <b>${students.length}</b></p>
             
-            <label class="btn-action btn-green" style="width:100%; justify-content:center; font-size:0.75rem; margin-bottom:8px;">
-              📥 استيراد طلاب من ملف Excel
-              <input type="file" accept=".xlsx, .xls" style="display:none" onchange="handleHallExcel(event, '${hall}')">
+            <label class="btn-action btn-green" style="width:100%; justify-content:center; font-size:0.75rem; margin-bottom:8px; cursor:pointer;">
+              📥 استيراد طلاب من ملف Excel (حجم كبير)
+              <input type="file" accept=".xlsx, .xls, .csv" style="display:none" onchange="handleHallExcel(event, '${hall}')">
             </label>
 
             <label style="font-size:0.8rem; font-weight:bold; display:block; margin-bottom:4px;">إدخال سريع لأسماء الطلاب الثلاثية:</label>
@@ -964,39 +969,67 @@
       }
     }
 
+    /* معالجة ملفات الأكسل الكبيرة باستخدام نظام Batching */
     function handleHallExcel(e, hall) {
       const file = e.target.files[0];
       if (!file) return;
 
       const reader = new FileReader();
       reader.onload = function(evt) {
-        const data = new Uint8Array(evt.target.result);
-        const workbook = XLSX.read(data, {type: 'array'});
-        const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-        
-        let addedCount = 0;
-        jsonData.forEach(row => {
-          const name = row['اسم الطالب'] || row['الاسم'] || row['الاسم الثلاثي'] || row['Name'];
-          const spec = row['الاختصاص'] || row['الفرع'] || 'عام';
-          const phone = row['الهاتف'] || row['رقم الهاتف'] || row['Phone'] || '';
-
-          if (name) {
-            schoolDB.halls[hall].push({
-              name: name.toString().trim(),
-              spec: spec.toString().trim(),
-              phone: phone.toString().trim(),
-              assignedTeacher: "",
-              grades: {}
-            });
-            addedCount++;
+        try {
+          const data = new Uint8Array(evt.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+          const jsonData = XLSX.utils.sheet_to_json(firstSheet, { defval: "" });
+          
+          if (jsonData.length === 0) {
+            alert("الملف فارغ أو لا يحتوي على بيانات صالحة!");
+            return;
           }
-        });
 
-        saveData();
-        renderHalls();
-        alert(`تم رفع الملف واستيراد ${addedCount} طالب بنجاح إلى (${hall})!`);
+          let addedCount = 0;
+          const batchSize = 500;
+          let index = 0;
+
+          if (!schoolDB.halls[hall]) schoolDB.halls[hall] = [];
+
+          function processBatch() {
+            const limit = Math.min(index + batchSize, jsonData.length);
+            for (; index < limit; index++) {
+              const row = jsonData[index];
+              const name = row['اسم الطالب'] || row['الاسم'] || row['الاسم الثلاثي'] || row['Name'] || row['الاسم الكامل'] || Object.values(row)[0];
+              const spec = row['الاختصاص'] || row['الفرع'] || row['القسم'] || 'عام';
+              const phone = row['الهاتف'] || row['رقم الهاتف'] || row['Phone'] || row['الموبايل'] || '';
+
+              if (name && name.toString().trim() !== "") {
+                schoolDB.halls[hall].push({
+                  name: name.toString().trim(),
+                  spec: spec.toString().trim(),
+                  phone: phone.toString().trim(),
+                  assignedTeacher: "",
+                  isExempt: false,
+                  grades: {}
+                });
+                addedCount++;
+              }
+            }
+
+            if (index < jsonData.length) {
+              setTimeout(processBatch, 10);
+            } else {
+              saveData();
+              renderHalls();
+              alert(`تم استيراد ${addedCount} طالب بنجاح إلى (${hall})!`);
+            }
+          }
+
+          processBatch();
+        } catch (err) {
+          alert("حدث خطأ أثناء قراءة ملف Excel، يرجى التأكد من صيغة الملف.");
+        }
       };
-      reader.readAsArrayBuffer(file);
+
+      reader.readAsBuffer ? reader.readAsBuffer(file) : reader.readAsArrayBuffer(file);
     }
 
     function addBulkStudents(hall) {
@@ -1005,7 +1038,7 @@
 
       const names = input.split(/[\n,]+/).map(n => n.trim()).filter(n => n.length > 0);
       names.forEach(name => {
-        schoolDB.halls[hall].push({ name, spec: "عام", phone: "", assignedTeacher: "", grades: {} });
+        schoolDB.halls[hall].push({ name, spec: "عام", phone: "", assignedTeacher: "", isExempt: false, grades: {} });
       });
 
       saveData();
@@ -1028,19 +1061,30 @@
       renderHalls();
     }
 
-    /* =========================================================
-       تحسين دالة تحميل وتحديث سجل الدرجات (حل مشكلة الفوكس والحفظ المباشر)
-       ========================================================= */
+    function toggleExemption(hall, idx) {
+      const student = schoolDB.halls[hall][idx];
+      student.isExempt = !student.isExempt;
+      saveData();
+      loadGradeTable();
+    }
+
     function loadGradeTable() {
       const hall = document.getElementById('grade-hall-select').value;
-      const viewType = (currentUserRole === 'teacher') ? 'subject' : document.getElementById('grade-view-type').value;
-      const subjectSelect = document.getElementById('grade-subject-select');
-      const subjectLabel = document.getElementById('subject-select-label');
-      
       const thead = document.getElementById('grades-table-head');
       const tbody = document.getElementById('grades-table-body');
 
-      if (currentUserRole === 'admin') {
+      let viewType = 'subject';
+      let subject = '';
+
+      if (currentUser && currentUser.role === 'teacher') {
+        viewType = 'subject';
+        subject = currentUser.teacher.subject;
+      } else {
+        viewType = document.getElementById('grade-view-type').value;
+        subject = document.getElementById('grade-subject-select').value;
+
+        const subjectSelect = document.getElementById('grade-subject-select');
+        const subjectLabel = document.getElementById('subject-select-label');
         if (viewType === 'all_subjects') {
           subjectSelect.style.display = 'none';
           subjectLabel.style.display = 'none';
@@ -1054,15 +1098,13 @@
       tbody.innerHTML = '';
 
       if(!hall || !schoolDB.halls[hall]) {
-        tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px; color:#a0aec0;">يرجى اختيار القاعة والمادة لعرض السجل التفاعلي</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="13" style="text-align:center; padding:20px; color:#a0aec0;">يرجى اختيار القاعة والمادة لعرض السجل التفاعلي</td></tr>';
         return;
       }
 
-      // 1. عرض سجل المدرس (عرض مادة واحدة)
       if (viewType === 'subject') {
-        const subject = (currentUserRole === 'teacher') ? currentTeacherObj.subject : subjectSelect.value;
         if (!subject) {
-          tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; padding:20px; color:#a0aec0;">يرجى اختيار المادة الدراسية لعرض الدرجات</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="13" style="text-align:center; padding:20px; color:#a0aec0;">يرجى اختيار المادة الدراسية لعرض الدرجات</td></tr>';
           return;
         }
 
@@ -1071,6 +1113,7 @@
             <th rowspan="2" style="width:40px;">#</th>
             <th rowspan="2" style="min-width:180px; text-align:right;">اسم الطالب الثلاثي</th>
             <th rowspan="2" style="width:100px;">الاختصاص</th>
+            <th rowspan="2" style="width:70px;">الإعفاء</th>
             <th colspan="3" class="group-header">الفصل الأول</th>
             <th rowspan="2" class="midterm-header" style="width:80px;">نصف السنة</th>
             <th colspan="3" class="group-header">الفصل الثاني</th>
@@ -1092,43 +1135,51 @@
 
           const term1 = Math.round(((g.m1||0) + (g.m2||0)) / 2);
           const term2 = Math.round(((g.m3||0) + (g.m4||0)) / 2);
-          const annual = Math.round((term1 + (g.mid||0) + term2) / 3);
+          
+          // حاسبة الإعفاء والسعي وفق الضوابط (إذا كان معفى يحسب معدل الفصلين بدون الامتحان النهائي/نصف السنة إن وجد)
+          let annual = 0;
+          if (student.isExempt) {
+            annual = Math.round((term1 + term2) / 2);
+          } else {
+            annual = Math.round((term1 + (g.mid||0) + term2) / 3);
+          }
+          
           const isPass = annual >= 50;
+          const badgeClass = student.isExempt ? 'badge-exempt' : (isPass ? 'badge-pass' : 'badge-fail');
+          const statusText = student.isExempt ? `معفى (${annual})` : annual;
 
           tbody.innerHTML += `
             <tr id="row-${idx}">
               <td><b>${idx + 1}</b></td>
               <td style="text-align:right;"><b>${student.name}</b></td>
               <td><span class="spec-tag">${student.spec || 'عام'}</span></td>
-              
-              <!-- الفصل الأول -->
+              <td>
+                <input type="checkbox" ${student.isExempt ? 'checked' : ''} onchange="toggleExemption('${hall}', ${idx})" title="تحديد كطالب معفى">
+              </td>
+
               <td><input type="number" class="grade-input" value="${g.m1||0}" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'm1', this.value, this)"></td>
               <td><input type="number" class="grade-input" value="${g.m2||0}" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'm2', this.value, this)"></td>
               <td><span class="calc-val term1-val">${term1}</span></td>
 
-              <!-- نصف السنة -->
-              <td><input type="number" class="grade-input midterm-input" value="${g.mid||0}" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'mid', this.value, this)"></td>
+              <td><input type="number" class="grade-input midterm-input" value="${g.mid||0}" min="0" max="100" ${student.isExempt ? 'disabled style="opacity:0.5;"' : ''} oninput="updateGrade('${hall}', ${idx}, '${subject}', 'mid', this.value, this)"></td>
 
-              <!-- الفصل الثاني -->
               <td><input type="number" class="grade-input" value="${g.m3||0}" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'm3', this.value, this)"></td>
               <td><input type="number" class="grade-input" value="${g.m4||0}" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'm4', this.value, this)"></td>
               <td><span class="calc-val term2-val">${term2}</span></td>
 
-              <!-- السعي السنوي النهائي -->
               <td>
-                <span class="annual-badge ${isPass ? 'badge-pass' : 'badge-fail'} annual-val">
-                  ${annual}
+                <span class="annual-badge ${badgeClass} annual-val">
+                  ${statusText}
                 </span>
               </td>
             </tr>`;
         });
 
       } else {
-        // 2. عرض سجل القاعة الشامل (كافة المواد)
         const subjectsList = schoolDB.teachers.map(t => t.subject);
         
         if (subjectsList.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:#a0aec0;">لا توجد مواد أو مدرسين مضافين للنظام بعد.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#a0aec0;">لا توجد مواد أو مدرسين مضافين للنظام بعد.</td></tr>';
           return;
         }
 
@@ -1142,7 +1193,7 @@
             <th style="width:100px;">الاختصاص</th>
             ${subHeaders}
             <th style="width:100px; background:#2b12b3;">المعدل العام</th>
-            <th style="width:90px; background:#00b894;">النتيجة</th>
+            <th style="width:90px; background:#00b894;">النتيجة العامة</th>
           </tr>`;
 
         schoolDB.halls[hall].forEach((student, idx) => {
@@ -1152,7 +1203,13 @@
             const g = (student.grades && student.grades[s]) ? student.grades[s] : {m1:0, m2:0, mid:0, m3:0, m4:0};
             const term1 = ((g.m1||0) + (g.m2||0)) / 2;
             const term2 = ((g.m3||0) + (g.m4||0)) / 2;
-            const ann = Math.round((term1 + (g.mid||0) + term2) / 3);
+            
+            let ann = 0;
+            if (student.isExempt) {
+              ann = Math.round((term1 + term2) / 2);
+            } else {
+              ann = Math.round((term1 + (g.mid||0) + term2) / 3);
+            }
             
             if(student.grades && student.grades[s]) {
               totalAnnual += ann;
@@ -1172,8 +1229,8 @@
               ${cols}
               <td><b style="color:#4318FF; font-size:1.05rem;">${finalAvg}</b></td>
               <td>
-                <span class="annual-badge ${isPass ? 'badge-pass' : 'badge-fail'}" style="font-size:0.8rem; padding:3px 8px;">
-                  ${isPass ? 'ناجح' : 'راسب'}
+                <span class="annual-badge ${student.isExempt ? 'badge-exempt' : (isPass ? 'badge-pass' : 'badge-fail')}" style="font-size:0.8rem; padding:3px 8px;">
+                  ${student.isExempt ? 'معفى' : (isPass ? 'ناجح' : 'راسب')}
                 </span>
               </td>
             </tr>`;
@@ -1181,7 +1238,6 @@
       }
     }
 
-    /* إصلاح دالة تحديث الدرجة لمنع إعادة الـ Render والعمل بسلاسة */
     function updateGrade(hall, idx, subject, field, val, inputElem) {
       if(!schoolDB.halls[hall][idx].grades) schoolDB.halls[hall][idx].grades = {};
       if(!schoolDB.halls[hall][idx].grades[subject]) schoolDB.halls[hall][idx].grades[subject] = { m1:0, m2:0, mid:0, m3:0, m4:0 };
@@ -1193,13 +1249,19 @@
       schoolDB.halls[hall][idx].grades[subject][field] = num;
       saveData();
 
-      // تحديث قيم السعي والمعدل مباشرة دون إعادة بناء الـ DOM
       const row = document.getElementById(`row-${idx}`);
       if (row) {
-        const g = schoolDB.halls[hall][idx].grades[subject];
+        const student = schoolDB.halls[hall][idx];
+        const g = student.grades[subject];
         const term1 = Math.round(((g.m1||0) + (g.m2||0)) / 2);
         const term2 = Math.round(((g.m3||0) + (g.m4||0)) / 2);
-        const annual = Math.round((term1 + (g.mid||0) + term2) / 3);
+        
+        let annual = 0;
+        if (student.isExempt) {
+          annual = Math.round((term1 + term2) / 2);
+        } else {
+          annual = Math.round((term1 + (g.mid||0) + term2) / 3);
+        }
 
         const term1Elem = row.querySelector('.term1-val');
         const term2Elem = row.querySelector('.term2-val');
@@ -1208,16 +1270,114 @@
         if(term1Elem) term1Elem.textContent = term1;
         if(term2Elem) term2Elem.textContent = term2;
         if(annualElem) {
-          annualElem.textContent = annual;
-          annualElem.className = `annual-badge ${annual >= 50 ? 'badge-pass' : 'badge-fail'} annual-val`;
+          const badgeClass = student.isExempt ? 'badge-exempt' : (annual >= 50 ? 'badge-pass' : 'badge-fail');
+          annualElem.textContent = student.isExempt ? `معفى (${annual})` : annual;
+          annualElem.className = `annual-badge ${badgeClass} annual-val`;
         }
       }
     }
 
+    /* تصدير جدول الدرجات الحالي إلى ملف Excel */
+    function exportGradesExcel() {
+      const hall = document.getElementById('grade-hall-select').value;
+      if (!hall || !schoolDB.halls[hall]) {
+        alert("يرجى اختيار القاعة أولاً!");
+        return;
+      }
+
+      let viewType = 'subject';
+      let subject = '';
+
+      if (currentUser && currentUser.role === 'teacher') {
+        subject = currentUser.teacher.subject;
+      } else {
+        viewType = document.getElementById('grade-view-type').value;
+        subject = document.getElementById('grade-subject-select').value;
+      }
+
+      let exportData = [];
+
+      if (viewType === 'subject') {
+        if (!subject) { alert("يرجى اختيار المادة!"); return; }
+
+        schoolDB.halls[hall].forEach((student, idx) => {
+          const g = (student.grades && student.grades[subject]) ? student.grades[subject] : { m1:0, m2:0, mid:0, m3:0, m4:0 };
+          const term1 = Math.round(((g.m1||0) + (g.m2||0)) / 2);
+          const term2 = Math.round(((g.m3||0) + (g.m4||0)) / 2);
+          
+          let annual = student.isExempt ? Math.round((term1 + term2) / 2) : Math.round((term1 + (g.mid||0) + term2) / 3);
+
+          exportData.push({
+            "ت": idx + 1,
+            "اسم الطالب الثلاثي": student.name,
+            "الاختصاص": student.spec || "عام",
+            "حالة الإعفاء": student.isExempt ? "نعم" : "لا",
+            "شهر 1 (ف1)": g.m1 || 0,
+            "شهر 2 (ف1)": g.m2 || 0,
+            "معدل الفصل الأول": term1,
+            "درجة نصف السنة": student.isExempt ? "معفى" : (g.mid || 0),
+            "شهر 1 (ف2)": g.m3 || 0,
+            "شهر 2 (ف2)": g.m4 || 0,
+            "معدل الفصل الثاني": term2,
+            "السعي السنوي": annual,
+            "النتيجة": student.isExempt ? "معفى" : (annual >= 50 ? "ناجح" : "راسب")
+          });
+        });
+      } else {
+        const subjectsList = schoolDB.teachers.map(t => t.subject);
+
+        schoolDB.halls[hall].forEach((student, idx) => {
+          let row = {
+            "ت": idx + 1,
+            "اسم الطالب الثلاثي": student.name,
+            "الاختصاص": student.spec || "عام",
+            "حالة الإعفاء": student.isExempt ? "نعم" : "لا"
+          };
+
+          let totalAnnual = 0, countSubjects = 0;
+          subjectsList.forEach(s => {
+            const g = (student.grades && student.grades[s]) ? student.grades[s] : {m1:0, m2:0, mid:0, m3:0, m4:0};
+            const term1 = ((g.m1||0) + (g.m2||0)) / 2;
+            const term2 = ((g.m3||0) + (g.m4||0)) / 2;
+            const ann = student.isExempt ? Math.round((term1 + term2) / 2) : Math.round((term1 + (g.mid||0) + term2) / 3);
+
+            row[s] = ann;
+            if(student.grades && student.grades[s]) {
+              totalAnnual += ann;
+              countSubjects++;
+            }
+          });
+
+          const finalAvg = countSubjects ? Math.round(totalAnnual / countSubjects) : 0;
+          row["المعدل العام"] = finalAvg;
+          row["النتيجة العامة"] = student.isExempt ? "معفى" : (finalAvg >= 50 ? "ناجح" : "راسب");
+
+          exportData.push(row);
+        });
+      }
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "سجل الدرجات");
+
+      const fileName = viewType === 'subject' 
+        ? `سجل_درجات_${subject}_${hall}.xlsx`
+        : `السجل_العام_${hall}.xlsx`;
+
+      XLSX.writeFile(workbook, fileName);
+    }
+
     function exportGradesPDF() {
       const hall = document.getElementById('grade-hall-select').value;
-      const viewType = (currentUserRole === 'teacher') ? 'subject' : document.getElementById('grade-view-type').value;
-      const subject = (currentUserRole === 'teacher') ? currentTeacherObj.subject : document.getElementById('grade-subject-select').value;
+      let subject = '';
+      let viewType = 'subject';
+
+      if (currentUser && currentUser.role === 'teacher') {
+        subject = currentUser.teacher.subject;
+      } else {
+        viewType = document.getElementById('grade-view-type').value;
+        subject = document.getElementById('grade-subject-select').value;
+      }
       
       if (!hall) { alert("يرجى اختيار القاعة أولاً!"); return; }
 
@@ -1231,10 +1391,10 @@
 
       const element = document.getElementById('grades-pdf-area');
       const opt = {
-        margin: 0.3,
+        margin: [0.3, 0.3, 0.3, 0.3],
         filename: `سجل_درجات_${hall}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
         jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
       };
 
@@ -1253,12 +1413,16 @@
         let totalAnnual = 0, countSubjects = 0;
         if(s.grades) {
           for (const [subj, g] of Object.entries(s.grades)) {
-            const ann = (((g.m1||0)+(g.m2||0))/2 + (g.mid||0) + ((g.m3||0)+(g.m4||0))/2) / 3;
+            const term1 = ((g.m1||0)+(g.m2||0))/2;
+            const term2 = ((g.m3||0)+(g.m4||0))/2;
+            const ann = s.isExempt ? (term1 + term2)/2 : (term1 + (g.mid||0) + term2) / 3;
             totalAnnual += ann;
             countSubjects++;
           }
         }
         const finalAvg = countSubjects ? Math.round(totalAnnual / countSubjects) : 0;
+        const resultLabel = s.isExempt ? 'معفى عام' : (finalAvg >= 50 ? 'ناجح' : 'راسب');
+        const resultColor = s.isExempt ? '#0369a1' : (finalAvg >= 50 ? 'green' : 'red');
 
         tbody.innerHTML += `
           <tr>
@@ -1266,53 +1430,19 @@
             <td><span class="spec-tag">${s.spec || 'عام'}</span></td>
             <td>${s.assignedTeacher || 'غير محدد'}</td>
             <td><b>${finalAvg}</b></td>
-            <td style="color:${finalAvg>=50?'green':'red'}; font-weight:bold">${finalAvg>=50?'ناجح':'راسب'}</td>
+            <td style="color:${resultColor}; font-weight:bold">${resultLabel}</td>
           </tr>`;
-      });
-    }
-
-    function sendReportTelegram() {
-      const hall = document.getElementById('report-hall-select').value;
-      const token = schoolDB.settings.telegramToken;
-      const chatId = schoolDB.settings.telegramChatId;
-
-      if (!token || !chatId) { alert("يرجى ضبط توكن البوت ومعرف القناة في الإعدادات!"); return; }
-      if (!hall) { alert("اختر القاعة أولاً!"); return; }
-
-      let msg = `🏫 *تقرير المدرسة الإلكترونية الشامل*\n🏛️ *القاعة:* ${hall}\n------------------------------\n`;
-
-      schoolDB.halls[hall].forEach((s, idx) => {
-        let totalAnnual = 0, countSubjects = 0;
-        if(s.grades) {
-          for (const [subj, g] of Object.entries(s.grades)) {
-            const ann = (((g.m1||0)+(g.m2||0))/2 + (g.mid||0) + ((g.m3||0)+(g.m4||0))/2) / 3;
-            totalAnnual += ann;
-            countSubjects++;
-          }
-        }
-        const finalAvg = countSubjects ? Math.round(totalAnnual / countSubjects) : 0;
-        msg += `${idx + 1}. *${s.name}* (${s.spec || 'عام'}) ⬅️ المعدل العام: *${finalAvg}*\n`;
-      });
-
-      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: chatId, text: msg, parse_mode: 'Markdown' })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if(data.ok) alert("تم إرسال التقرير إلى التليجرام بنجاح! 🚀");
-        else alert("خطأ في الإرسال: " + data.description);
       });
     }
 
     function saveSettings() {
       schoolDB.settings.schoolName = document.getElementById('set-school-name').value || "المنصة المدرسية الإلكترونية";
-      schoolDB.settings.telegramToken = document.getElementById('set-telegram-token').value.trim();
-      schoolDB.settings.telegramChatId = document.getElementById('set-telegram-chatid').value.trim();
-      
+      const newAdminPass = document.getElementById('set-admin-pass').value.trim();
+      if (newAdminPass) {
+        schoolDB.settings.adminPass = newAdminPass;
+      }
       saveData();
-      alert("تم حفظ إعدادات المنصة واسم المدرسة بنجاح!");
+      alert("تم حفظ اسم المدرسة ورمز دخول المدير بنجاح!");
     }
 
     function resetDatabase() {
