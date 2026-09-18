@@ -25,6 +25,16 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
     body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 40px; transition: 0.3s; }
 
+    /* إخفاء أسهم الزيادة والنقصان في حقول الأرقام لجميع المتصفحات */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+
     /* شاشة تسجيل الدخول */
     .login-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -162,7 +172,6 @@
     .checkbox-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; background: rgba(0,0,0,0.03); padding: 5px 10px; border-radius: 8px; }
     .checkbox-item input { width: auto; margin-bottom: 0; }
 
-    /* تنسيقات حصرية للطباعة وتصدير PDF بدون نصوص مقلوبة */
     @media print {
       body * { visibility: hidden; }
       #grades-pdf-area, #grades-pdf-area * { visibility: visible; }
@@ -935,7 +944,7 @@
             <p style="font-size:0.8rem; color:#666; margin-bottom:8px;">إجمالي الطلاب: <b>${students.length}</b></p>
             
             <label class="btn-action btn-green" style="width:100%; justify-content:center; font-size:0.75rem; margin-bottom:8px; cursor:pointer;">
-              📥 استيراد طلاب من ملف Excel (حجم كبير)
+              📥 استيراد طلاب من ملف Excel
               <input type="file" accept=".xlsx, .xls, .csv" style="display:none" onchange="handleHallExcel(event, '${hall}')">
             </label>
 
@@ -1054,7 +1063,22 @@
       renderHalls();
     }
 
-    /* كود جدول الدرجات التفاعلي المباشر (سعي الفصل الأول | نصف السنة | سعي الفصل الثاني | السعي السنوي) */
+    function calculateAnnualGrade(g) {
+      const val1 = (g.term1 !== null && g.term1 !== undefined) ? parseFloat(g.term1) : null;
+      const valMid = (g.mid !== null && g.mid !== undefined) ? parseFloat(g.mid) : null;
+      const val2 = (g.term2 !== null && g.term2 !== undefined) ? parseFloat(g.term2) : null;
+
+      let sum = 0;
+      let count = 0;
+
+      if (val1 !== null && !isNaN(val1)) { sum += val1; count++; }
+      if (valMid !== null && !isNaN(valMid)) { sum += valMid; count++; }
+      if (val2 !== null && !isNaN(val2)) { sum += val2; count++; }
+
+      if (count === 0) return null;
+      return Math.round(sum / count);
+    }
+
     function loadGradeTable() {
       const hall = document.getElementById('grade-hall-select').value;
       const thead = document.getElementById('grades-table-head');
@@ -1116,15 +1140,10 @@
           const valMid = (g.mid !== null && g.mid !== undefined) ? g.mid : '';
           const val2 = (g.term2 !== null && g.term2 !== undefined) ? g.term2 : '';
 
-          const n1 = parseFloat(val1) || 0;
-          const nMid = parseFloat(valMid) || 0;
-          const n2 = parseFloat(val2) || 0;
-
-          const annual = Math.round((n1 + nMid + n2) / 3);
-          const hasData = (val1 !== '' || valMid !== '' || val2 !== '');
-          const isPass = annual >= 50;
+          const annual = calculateAnnualGrade(g);
+          const isPass = annual !== null && annual >= 50;
           const badgeClass = isPass ? 'badge-pass' : 'badge-fail';
-          const statusText = hasData ? annual : '-';
+          const statusText = annual !== null ? annual : '-';
 
           tbody.innerHTML += `
             <tr id="row-${idx}">
@@ -1172,17 +1191,15 @@
 
           subjectsList.forEach(s => {
             const g = (student.grades && student.grades[s]) ? student.grades[s] : { term1: null, mid: null, term2: null };
+            const ann = calculateAnnualGrade(g);
             
-            const n1 = parseFloat(g.term1) || 0;
-            const nMid = parseFloat(g.mid) || 0;
-            const n2 = parseFloat(g.term2) || 0;
-            const ann = Math.round((n1 + nMid + n2) / 3);
-            
-            if(student.grades && student.grades[s]) {
+            if(ann !== null) {
               totalAnnual += ann;
               countSubjects++;
+              cols += `<td><b style="color:${ann>=50?'#2b3674':'#EE5D50'}">${ann}</b></td>`;
+            } else {
+              cols += `<td><span style="color:#aaa;">-</span></td>`;
             }
-            cols += `<td><b style="color:${ann>=50?'#2b3674':'#EE5D50'}">${ann}</b></td>`;
           });
 
           const finalAvg = countSubjects ? Math.round(totalAnnual / countSubjects) : 0;
@@ -1194,10 +1211,10 @@
               <td style="text-align:right;"><b>${student.name}</b></td>
               <td><span class="spec-tag">${student.spec || 'عام'}</span></td>
               ${cols}
-              <td><b style="color:#4318FF; font-size:1.05rem;">${finalAvg}</b></td>
+              <td><b style="color:#4318FF; font-size:1.05rem;">${countSubjects > 0 ? finalAvg : '-'}</b></td>
               <td>
-                <span class="annual-badge ${isPass ? 'badge-pass' : 'badge-fail'}" style="font-size:0.8rem; padding:3px 8px;">
-                  ${isPass ? 'ناجح' : 'راسب'}
+                <span class="annual-badge ${isPass && countSubjects > 0 ? 'badge-pass' : 'badge-fail'}" style="font-size:0.8rem; padding:3px 8px;">
+                  ${countSubjects === 0 ? '-' : (isPass ? 'ناجح' : 'راسب')}
                 </span>
               </td>
             </tr>`;
@@ -1224,17 +1241,12 @@
       if (row) {
         const student = schoolDB.halls[hall][idx];
         const g = student.grades[subject];
-        
-        const n1 = parseFloat(g.term1) || 0;
-        const nMid = parseFloat(g.mid) || 0;
-        const n2 = parseFloat(g.term2) || 0;
-        const annual = Math.round((n1 + nMid + n2) / 3);
+        const annual = calculateAnnualGrade(g);
 
         const annualElem = row.querySelector('.annual-val');
         if(annualElem) {
-          const hasData = (g.term1 !== null || g.mid !== null || g.term2 !== null);
-          const badgeClass = annual >= 50 ? 'badge-pass' : 'badge-fail';
-          annualElem.textContent = hasData ? annual : '-';
+          const badgeClass = (annual !== null && annual >= 50) ? 'badge-pass' : 'badge-fail';
+          annualElem.textContent = annual !== null ? annual : '-';
           annualElem.className = `annual-badge ${badgeClass} annual-val`;
         }
       }
@@ -1264,11 +1276,7 @@
 
         schoolDB.halls[hall].forEach((student, idx) => {
           const g = (student.grades && student.grades[subject]) ? student.grades[subject] : { term1: null, mid: null, term2: null };
-          
-          const n1 = parseFloat(g.term1) || 0;
-          const nMid = parseFloat(g.mid) || 0;
-          const n2 = parseFloat(g.term2) || 0;
-          const annual = Math.round((n1 + nMid + n2) / 3);
+          const annual = calculateAnnualGrade(g);
 
           exportData.push({
             "ت": idx + 1,
@@ -1277,8 +1285,8 @@
             "سعي الفصل الأول": g.term1 !== null ? g.term1 : "",
             "درجة نصف السنة": g.mid !== null ? g.mid : "",
             "سعي الفصل الثاني": g.term2 !== null ? g.term2 : "",
-            "السعي السنوي": annual,
-            "النتيجة": annual >= 50 ? "ناجح" : "راسب"
+            "السعي السنوي": annual !== null ? annual : "-",
+            "النتيجة": annual === null ? "-" : (annual >= 50 ? "ناجح" : "راسب")
           });
         });
       } else {
@@ -1294,21 +1302,18 @@
           let totalAnnual = 0, countSubjects = 0;
           subjectsList.forEach(s => {
             const g = (student.grades && student.grades[s]) ? student.grades[s] : { term1: null, mid: null, term2: null };
-            const n1 = parseFloat(g.term1) || 0;
-            const nMid = parseFloat(g.mid) || 0;
-            const n2 = parseFloat(g.term2) || 0;
-            const ann = Math.round((n1 + nMid + n2) / 3);
+            const ann = calculateAnnualGrade(g);
 
-            row[s] = ann;
-            if(student.grades && student.grades[s]) {
+            row[s] = ann !== null ? ann : "-";
+            if(ann !== null) {
               totalAnnual += ann;
               countSubjects++;
             }
           });
 
           const finalAvg = countSubjects ? Math.round(totalAnnual / countSubjects) : 0;
-          row["المعدل العام"] = finalAvg;
-          row["النتيجة العامة"] = finalAvg >= 50 ? "ناجح" : "راسب";
+          row["المعدل العام"] = countSubjects > 0 ? finalAvg : "-";
+          row["النتيجة العامة"] = countSubjects === 0 ? "-" : (finalAvg >= 50 ? "ناجح" : "راسب");
 
           exportData.push(row);
         });
@@ -1325,7 +1330,6 @@
       XLSX.writeFile(workbook, fileName);
     }
 
-    /* طباعة / حفظ مستند PDF دقيق للغة العربية وبدون نصوص مقلوبة */
     function exportGradesPDF() {
       const hall = document.getElementById('grade-hall-select').value;
       let subject = '';
@@ -1361,24 +1365,23 @@
         let totalAnnual = 0, countSubjects = 0;
         if(s.grades) {
           for (const [subj, g] of Object.entries(s.grades)) {
-            const n1 = parseFloat(g.term1) || 0;
-            const nMid = parseFloat(g.mid) || 0;
-            const n2 = parseFloat(g.term2) || 0;
-            const ann = (n1 + nMid + n2) / 3;
-            totalAnnual += ann;
-            countSubjects++;
+            const ann = calculateAnnualGrade(g);
+            if (ann !== null) {
+              totalAnnual += ann;
+              countSubjects++;
+            }
           }
         }
         const finalAvg = countSubjects ? Math.round(totalAnnual / countSubjects) : 0;
-        const resultLabel = finalAvg >= 50 ? 'ناجح' : 'راسب';
-        const resultColor = finalAvg >= 50 ? 'green' : 'red';
+        const resultLabel = countSubjects === 0 ? 'غير مكتمل' : (finalAvg >= 50 ? 'ناجح' : 'راسب');
+        const resultColor = countSubjects === 0 ? '#7090B0' : (finalAvg >= 50 ? 'green' : 'red');
 
         tbody.innerHTML += `
           <tr>
             <td>${s.name}</td>
             <td><span class="spec-tag">${s.spec || 'عام'}</span></td>
             <td>${s.assignedTeacher || 'غير محدد'}</td>
-            <td><b>${finalAvg}</b></td>
+            <td><b>${countSubjects > 0 ? finalAvg : '-'}</b></td>
             <td style="color:${resultColor}; font-weight:bold">${resultLabel}</td>
           </tr>`;
       });
@@ -1400,11 +1403,6 @@
         location.reload();
       }
     }
-
-    updateDashboardStats();
-  </script>
-</body>
-</html>
 
     updateDashboardStats();
   </script>
