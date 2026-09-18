@@ -846,6 +846,14 @@
         return;
       }
 
+      // إزالة القاعة من جميع المدرسين أولاً لضمان عدم بقاء المدرسين المحذوفين
+      schoolDB.teachers.forEach(tObj => {
+        if (tObj.assignedHalls) {
+          tObj.assignedHalls = tObj.assignedHalls.filter(h => h !== activeHallForTeachers);
+        }
+      });
+
+      // حفظ الخيارات الجديدة المحددة
       schoolDB.hallTeachersMap[activeHallForTeachers] = checkedTeachers;
 
       checkedTeachers.forEach(tName => {
