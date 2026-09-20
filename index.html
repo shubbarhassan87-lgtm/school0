@@ -418,7 +418,7 @@
       </div>
 
       <div style="font-size:0.8rem; color:#666; margin-bottom:10px; background:rgba(67,24,255,0.05); padding:8px 12px; border-radius:8px;">
-        📌 <b>ملاحظة للرصد:</b> أدخل الدرجة من (0 - 100)، أو اكتب <b>(غ)</b> للغائب، أو <b>(م)</b> للمجاز. الحقول المظللة بالرمادي تكون مغلقة من قبل الإدارة.
+        📌 <b>ملاحظة للرصد:</b> أدخل الدرجة من (0 - 100)، أو اكتب <b>(غ)</b> للغائب، أو <b>(م)</b> للمجاز. الحقول المغلقة تكون مظللة ولا يمكن للمدرس تعديلها.
       </div>
 
       <div class="controls-bar">
@@ -478,13 +478,13 @@
         <input type="text" id="set-admin-pass" placeholder="أدخل رمز مدير جديد">
       </div>
 
-      <!-- قسم التحكم بقفل إضافة وتعديل الدرجات للمدرسين -->
+      <!-- قسم التحكم بقفل إدخال الدرجات للمدرسين -->
       <div class="lock-box-container">
         <h4 style="color:#EE5D50; margin-bottom:8px;">🔒 التحكم بقفل إدخال الدرجات للمدرسين:</h4>
-        <p style="font-size:0.8rem; color:#666; margin-bottom:12px;">عند تفعيل القفل لأي مرحلة، لن يتمكن المدرسون من تعديل أو إدخال الدرجات الخاصة بها (تبقى متاحة للمدير فقط).</p>
+        <p style="font-size:0.8rem; color:#666; margin-bottom:12px;">عند تفعيل القفل، لن يتمكن المدرسون من تعديل درجات هذه الفترة (تبقى ممتلئة ومتاحة للمدير فقط).</p>
 
         <div class="lock-option">
-          <span>🔒 قفل درجات <b>الفصل / الكورس الأول</b> (شهور الكورس الأول):</span>
+          <span>🔒 قفل درجات <b>معدل الفصل الأول</b>:</span>
           <label class="switch">
             <input type="checkbox" id="lock-term1" onchange="saveLockSettings()">
             <span class="slider"></span>
@@ -492,7 +492,7 @@
         </div>
 
         <div class="lock-option">
-          <span>🔒 قفل درجات <b>امتحانات نصف السنة</b>:</span>
+          <span>🔒 قفل درجات <b>نصف السنة</b>:</span>
           <label class="switch">
             <input type="checkbox" id="lock-midterm" onchange="saveLockSettings()">
             <span class="slider"></span>
@@ -500,7 +500,7 @@
         </div>
 
         <div class="lock-option">
-          <span>🔒 قفل درجات <b>الفصل / الكورس الثاني</b> (شهور الكورس الثاني):</span>
+          <span>🔒 قفل درجات <b>معدل الفصل الثاني</b>:</span>
           <label class="switch">
             <input type="checkbox" id="lock-term2" onchange="saveLockSettings()">
             <span class="slider"></span>
@@ -571,7 +571,6 @@
       document.getElementById('set-school-name').value = schoolDB.settings.schoolName || "";
       document.getElementById('set-admin-pass').value = schoolDB.settings.adminPass || "1987";
 
-      // تحديث أزرار قفل الدرجات
       let locks = schoolDB.settings.locks || { term1: false, midterm: false, term2: false };
       document.getElementById('lock-term1').checked = !!locks.term1;
       document.getElementById('lock-midterm').checked = !!locks.midterm;
@@ -1147,27 +1146,6 @@
       return { type: 'num', val: num };
     }
 
-    function calcAvgFromList(arr) {
-      let sum = 0, count = 0, hasAbsent = false, hasExcused = false;
-
-      arr.forEach(item => {
-        let parsed = parseGradeVal(item);
-        if (parsed.type === 'num') {
-          sum += parsed.val;
-          count++;
-        } else if (parsed.type === 'absent') {
-          hasAbsent = true;
-        } else if (parsed.type === 'excused') {
-          hasExcused = true;
-        }
-      });
-
-      if (count > 0) return { display: Math.round(sum / count), val: Math.round(sum / count) };
-      if (hasAbsent) return { display: 'غائب', val: 0 };
-      if (hasExcused) return { display: 'مجاز', val: 0 };
-      return { display: '-', val: 0 };
-    }
-
     function loadGradeTable() {
       const hall = document.getElementById('grade-hall-select').value;
       const viewType = document.getElementById('grade-view-type') ? document.getElementById('grade-view-type').value : 'subject';
@@ -1213,7 +1191,7 @@
         return;
       }
 
-      // تحديد حالة التعطيل للحقول وفق الحساب والقفل
+      // تحديد حالة التعطيل للحقول وفق القفل وحساب المستخدم
       const term1Disabled = isTeacher && locks.term1 ? 'disabled' : '';
       const midDisabled = isTeacher && locks.midterm ? 'disabled' : '';
       const term2Disabled = isTeacher && locks.term2 ? 'disabled' : '';
@@ -1222,14 +1200,9 @@
         <tr>
           <th>#</th>
           <th>اسم الطالب الثلاثي</th>
-          <th>شهر 1 (100) ${locks.term1 ? '🔒' : ''}</th>
-          <th>شهر 2 (100) ${locks.term1 ? '🔒' : ''}</th>
-          <th>شهر 3 (100) ${locks.term1 ? '🔒' : ''}</th>
-          <th>معدل الكورس الأول</th>
+          <th>معدل الفصل الأول (100) ${locks.term1 ? '🔒' : ''}</th>
           <th>نصف السنة (100) ${locks.midterm ? '🔒' : ''}</th>
-          <th>شهر 1 كورس 2 ${locks.term2 ? '🔒' : ''}</th>
-          <th>شهر 2 كورس 2 ${locks.term2 ? '🔒' : ''}</th>
-          <th>معدل الكورس الثاني</th>`;
+          <th>معدل الفصل الثاني (100) ${locks.term2 ? '🔒' : ''}</th>`;
       
       if (!isTeacher) {
         thHTML += `<th>المعدل السنوي</th>`;
@@ -1243,19 +1216,19 @@
       students.forEach((s, idx) => {
         if (!s.grades) s.grades = {};
         if (!s.grades[subject]) {
-          s.grades[subject] = { m1: "", m2: "", m3: "", mid: "", m1_c2: "", m2_c2: "" };
+          s.grades[subject] = { term1_avg: "", mid: "", term2_avg: "" };
         }
         let g = s.grades[subject];
 
-        let c1 = calcAvgFromList([g.m1, g.m2, g.m3]);
-        let c2 = calcAvgFromList([g.m1_c2, g.m2_c2]);
+        let t1Parsed = parseGradeVal(g.term1_avg);
         let midParsed = parseGradeVal(g.mid);
+        let t2Parsed = parseGradeVal(g.term2_avg);
 
         let sumTerms = 0, countTerms = 0;
 
-        if (typeof c1.display === 'number') { sumTerms += c1.val; countTerms++; }
+        if (t1Parsed.type === 'num') { sumTerms += t1Parsed.val; countTerms++; }
         if (midParsed.type === 'num') { sumTerms += midParsed.val; countTerms++; }
-        if (typeof c2.display === 'number') { sumTerms += c2.val; countTerms++; }
+        if (t2Parsed.type === 'num') { sumTerms += t2Parsed.val; countTerms++; }
 
         let annualAvg = countTerms > 0 ? Math.round(sumTerms / countTerms) : 0;
 
@@ -1267,14 +1240,9 @@
           <tr>
             <td>${idx + 1}</td>
             <td><b>${s.name}</b></td>
-            <td><input type="text" class="grade-input" ${term1Disabled} value="${g.m1||''}" placeholder="0-100/غ/م" onchange="updateGrade('${hall}', ${idx}, '${subject}', 'm1', this.value)"></td>
-            <td><input type="text" class="grade-input" ${term1Disabled} value="${g.m2||''}" placeholder="0-100/غ/م" onchange="updateGrade('${hall}', ${idx}, '${subject}', 'm2', this.value)"></td>
-            <td><input type="text" class="grade-input" ${term1Disabled} value="${g.m3||''}" placeholder="0-100/غ/م" onchange="updateGrade('${hall}', ${idx}, '${subject}', 'm3', this.value)"></td>
-            <td style="font-weight:bold; color:#4318FF;">${c1.display}</td>
-            <td><input type="text" class="grade-input midterm-input" ${midDisabled} value="${g.mid||''}" placeholder="0-100/غ/م" onchange="updateGrade('${hall}', ${idx}, '${subject}', 'mid', this.value)"></td>
-            <td><input type="text" class="grade-input" ${term2Disabled} value="${g.m1_c2||''}" placeholder="0-100/غ/م" onchange="updateGrade('${hall}', ${idx}, '${subject}', 'm1_c2', this.value)"></td>
-            <td><input type="text" class="grade-input" ${term2Disabled} value="${g.m2_c2||''}" placeholder="0-100/غ/م" onchange="updateGrade('${hall}', ${idx}, '${subject}', 'm2_c2', this.value)"></td>
-            <td style="font-weight:bold; color:#4318FF;">${c2.display}</td>`;
+            <td><input type="text" class="grade-input" ${term1Disabled} value="${g.term1_avg||''}" placeholder="" onchange="updateGrade('${hall}', ${idx}, '${subject}', 'term1_avg', this.value)"></td>
+            <td><input type="text" class="grade-input midterm-input" ${midDisabled} value="${g.mid||''}" placeholder="" onchange="updateGrade('${hall}', ${idx}, '${subject}', 'mid', this.value)"></td>
+            <td><input type="text" class="grade-input" ${term2Disabled} value="${g.term2_avg||''}" placeholder="" onchange="updateGrade('${hall}', ${idx}, '${subject}', 'term2_avg', this.value)"></td>`;
 
         if (!isTeacher) {
           trHTML += `<td><span class="annual-badge ${badgeClass}">${annualAvg}</span></td>`;
@@ -1320,15 +1288,15 @@
 
         subjects.forEach(sub => {
           let g = s.grades && s.grades[sub] ? s.grades[sub] : {};
-          let c1 = calcAvgFromList([g.m1, g.m2, g.m3]);
-          let c2 = calcAvgFromList([g.m1_c2, g.m2_c2]);
+          let t1Parsed = parseGradeVal(g.term1_avg);
           let midParsed = parseGradeVal(g.mid);
+          let t2Parsed = parseGradeVal(g.term2_avg);
 
           let sumTerms = 0, countTerms = 0;
 
-          if (typeof c1.display === 'number') { sumTerms += c1.val; countTerms++; }
+          if (t1Parsed.type === 'num') { sumTerms += t1Parsed.val; countTerms++; }
           if (midParsed.type === 'num') { sumTerms += midParsed.val; countTerms++; }
-          if (typeof c2.display === 'number') { sumTerms += c2.val; countTerms++; }
+          if (t2Parsed.type === 'num') { sumTerms += t2Parsed.val; countTerms++; }
 
           let annualAvg = countTerms > 0 ? Math.round(sumTerms / countTerms) : 0;
 
@@ -1363,7 +1331,7 @@
         schoolDB.halls[hall][studentIdx].grades = {};
       }
       if (!schoolDB.halls[hall][studentIdx].grades[subject]) {
-        schoolDB.halls[hall][studentIdx].grades[subject] = { m1: "", m2: "", m3: "", mid: "", m1_c2: "", m2_c2: "" };
+        schoolDB.halls[hall][studentIdx].grades[subject] = { term1_avg: "", mid: "", term2_avg: "" };
       }
 
       let parsed = parseGradeVal(val);
@@ -1421,15 +1389,15 @@
 
       subjects.forEach(sub => {
         let g = student.grades && student.grades[sub] ? student.grades[sub] : {};
-        let c1 = calcAvgFromList([g.m1, g.m2, g.m3]);
-        let c2 = calcAvgFromList([g.m1_c2, g.m2_c2]);
+        let t1Parsed = parseGradeVal(g.term1_avg);
         let midParsed = parseGradeVal(g.mid);
+        let t2Parsed = parseGradeVal(g.term2_avg);
 
         let sumTerms = 0, countTerms = 0;
 
-        if (typeof c1.display === 'number') { sumTerms += c1.val; countTerms++; }
+        if (t1Parsed.type === 'num') { sumTerms += t1Parsed.val; countTerms++; }
         if (midParsed.type === 'num') { sumTerms += midParsed.val; countTerms++; }
-        if (typeof c2.display === 'number') { sumTerms += c2.val; countTerms++; }
+        if (t2Parsed.type === 'num') { sumTerms += t2Parsed.val; countTerms++; }
 
         let avg = countTerms > 0 ? Math.round(sumTerms / countTerms) : 0;
 
