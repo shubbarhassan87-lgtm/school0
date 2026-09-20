@@ -25,13 +25,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
     body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 40px; transition: 0.3s; }
 
-    input[type=number]::-webkit-inner-spin-button, 
-    input[type=number]::-webkit-outer-spin-button { 
-      -webkit-appearance: none; 
-      margin: 0; 
-    }
-    input[type=number] { -moz-appearance: textfield; }
-
     .login-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: linear-gradient(135deg, #11047A 0%, #4318FF 100%);
@@ -81,7 +74,6 @@
     .box-teachers { background: linear-gradient(135deg, #FF5E7E, #FF9966); }
     .box-students { background: linear-gradient(135deg, #00C6FF, #0072FF); }
     .box-grades { background: linear-gradient(135deg, #7F00FF, #E100FF); }
-    .box-reports { background: linear-gradient(135deg, #FF416C, #FF4B2B); }
     .box-settings { background: linear-gradient(135deg, #30336b, #130f40); }
 
     .view-section { display: none; margin-top: 20px; background: var(--card-bg); padding: 25px; border-radius: 20px; box-shadow: var(--card-shadow); }
@@ -122,17 +114,24 @@
     tbody tr:hover { background-color: rgba(67, 24, 255, 0.05); }
 
     .grade-input {
-      width: 75px; text-align: center; border-radius: 8px;
+      width: 80px; text-align: center; border-radius: 8px;
       border: 1.5px solid #dcdfe6; padding: 6px; margin-bottom: 0;
       font-weight: 700; font-size: 0.95rem; transition: all 0.2s ease; background: #fff;
     }
+    .grade-input:disabled {
+      background-color: #e9ecef !important;
+      cursor: not-allowed;
+      border-color: #ced4da !important;
+      color: #6c757d !important;
+    }
     body.dark-mode .grade-input { background: #0b1437; border-color: #2b3674; color: #fff; }
+    body.dark-mode .grade-input:disabled { background: #1b254b !important; color: #52608d !important; }
     .grade-input:focus { border-color: #4318FF; outline: none; box-shadow: 0 0 0 3px rgba(67, 24, 255, 0.15); }
     .grade-input.midterm-input { border-color: #7F00FF; background-color: #fcf8ff; }
     body.dark-mode .grade-input.midterm-input { background-color: #1a0b36; }
 
     .annual-badge {
-      font-size: 0.9rem; font-weight: 800; padding: 4px 10px;
+      font-size: 0.85rem; font-weight: 800; padding: 4px 10px;
       border-radius: 8px; display: inline-block; min-width: 48px;
     }
     .badge-pass { background: #e6fffa; color: #047857; border: 1px solid #b2f5ea; }
@@ -144,7 +143,6 @@
     .teacher-info-list { list-style: none; margin: 10px 0; font-size: 0.9rem; }
     .teacher-info-list li { margin-bottom: 8px; display: flex; justify-content: space-between; border-bottom: 1px dashed #edf2f7; padding-bottom: 5px; flex-wrap: wrap; gap: 5px; }
     .hall-tag { background: #e0e7ff; color: #4318FF; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; margin-left: 4px; display: inline-block; margin-bottom: 2px; }
-    .spec-tag { background: #e6fffa; color: #047857; padding: 2px 6px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
     .code-badge { background: #fff3bf; color: #d9480f; padding: 3px 8px; border-radius: 6px; font-weight: bold; font-family: monospace; font-size: 0.9rem; border: 1px dashed #fcc419; }
 
     .settings-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; max-width: 450px; }
@@ -157,6 +155,37 @@
       border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(67, 24, 255, 0.1);
       flex-wrap: wrap; justify-content: space-around; font-weight: bold; font-size: 0.9rem;
     }
+
+    .lock-box-container {
+      background: rgba(238, 93, 80, 0.05);
+      border: 1px solid rgba(238, 93, 80, 0.2);
+      border-radius: 14px;
+      padding: 15px;
+      margin-top: 15px;
+    }
+    .lock-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px dashed rgba(0,0,0,0.08);
+    }
+    .lock-option:last-child { border-bottom: none; }
+
+    .switch {
+      position: relative; display: inline-block; width: 46px; height: 24px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc; transition: .3s; border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+      background-color: white; transition: .3s; border-radius: 50%;
+    }
+    input:checked + .slider { background-color: #EE5D50; }
+    input:checked + .slider:before { transform: translateX(22px); }
 
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -248,7 +277,7 @@
       </div>
     </div>
 
-    <!-- 2. نافذة إضافة طالب جديد بالتفصيل -->
+    <!-- 2. نافذة إضافة طالب جديد -->
     <div class="modal-overlay" id="student-modal">
       <div class="modal-card">
         <div class="modal-header">
@@ -261,14 +290,6 @@
 
         <label style="font-size:0.85rem; font-weight:bold;">اختر القاعة الدراسية:</label>
         <select id="student-hall-select"></select>
-
-        <label style="font-size:0.85rem; font-weight:bold;">الاختصاص / الفرع الدراسي:</label>
-        <select id="student-spec-select">
-          <option value="علمي - أحياء">علمي - أحياء</option>
-          <option value="علمي - تطبيقي">علمي - تطبيقي</option>
-          <option value="أدبي">أدبي</option>
-          <option value="عام / مشترك">عام / مشترك</option>
-        </select>
 
         <label style="font-size:0.85rem; font-weight:bold;">رقم هاتف ولي الأمر (اختياري):</label>
         <input type="text" id="student-phone" placeholder="07xxxxxxxx">
@@ -352,16 +373,13 @@
           <div><h3><span>👨‍🏫</span> إدارة المدرسين والأكواد</h3><p>إضافة الكادر وتوليد أكواد الدخول والحصص والقاعات</p></div>
         </div>
         <div class="color-box box-students" onclick="openView('students-view')">
-          <div><h3><span>🏛️</span> إدارة الطلاب والقاعات والاختصاص</h3><p>إضافة الأسماء الثلاثية والتخصص والمدرسين لكل قاعة</p></div>
+          <div><h3><span>🏛️</span> إدارة الطلاب والقاعات</h3><p>إضافة الأسماء الثلاثية والمدرسين لكل قاعة</p></div>
         </div>
         <div class="color-box box-grades" onclick="openView('grades-view')">
           <div><h3><span>📊</span> سجل الدرجات الشامل (PDF / Excel)</h3><p>رصد الدرجات وتصدير السجل بشكل كامل</p></div>
         </div>
-        <div class="color-box box-reports" onclick="openView('reports-view')">
-          <div><h3><span>📈</span> التقارير والنتائج العامة</h3><p>تصدير النتائج الشاملة والأوائل</p></div>
-        </div>
         <div class="color-box box-settings" onclick="openView('settings-view')">
-          <div><h3><span>⚙️</span> إعدادات المنصة والنسخ الاحتياطي</h3><p>تغيير الرمز والنسخ الاحتياطي واسترجاع البيانات</p></div>
+          <div><h3><span>⚙️</span> إعدادات المنصة والنسخ الاحتياطي والقفل</h3><p>تغيير الرمز، التحكم بقفل إدخال الدرجات والنسخ الاحتياطي</p></div>
         </div>
       </div>
     </div>
@@ -379,15 +397,15 @@
       <div class="card-grid" id="teachers-container"></div>
     </div>
 
-    <!-- 2. إدارة القاعات المربوطة بالطلاب والمدرسين والاختصاص -->
+    <!-- 2. إدارة القاعات المربوطة بالطلاب والمدرسين -->
     <div id="students-view" class="view-section">
       <div class="section-title">
-        <span>🏛️ إدارة القاعات، الطلاب والاختصاصات</span>
+        <span>🏛️ إدارة القاعات والطلاب</span>
         <button class="back-btn" onclick="closeView('students-view')">رجوع ↩</button>
       </div>
       <div class="controls-bar">
         <button class="btn-action btn-blue" onclick="addCustomHall()">➕ إضافة قاعة دراسية جديدة</button>
-        <button class="btn-action btn-green" onclick="openAddStudentModal()">👤 إضافة طالب جديد (اسم ثلاثي واختصاص)</button>
+        <button class="btn-action btn-green" onclick="openAddStudentModal()">👤 إضافة طالب جديد</button>
       </div>
       <div class="card-grid" id="halls-container"></div>
     </div>
@@ -398,6 +416,11 @@
         <span id="grades-title-text">📊 سجل الدرجات التفاعلي والربط المباشر</span>
         <button class="back-btn" id="grades-back-btn" onclick="closeView('grades-view')">رجوع ↩</button>
       </div>
+
+      <div style="font-size:0.8rem; color:#666; margin-bottom:10px; background:rgba(67,24,255,0.05); padding:8px 12px; border-radius:8px;">
+        📌 <b>ملاحظة للرصد:</b> أدخل الدرجة من (0 - 100)، أو اكتب <b>(غ)</b> للغائب، أو <b>(م)</b> للمجاز. الحقول المظللة بالرمادي تكون مغلقة من قبل الإدارة.
+      </div>
+
       <div class="controls-bar">
         <label style="width:auto; margin:0;">القاعة: </label>
         <select id="grade-hall-select" style="width:auto; margin:0;" onchange="loadGradeTable()"></select>
@@ -419,7 +442,7 @@
         <button class="btn-action btn-red" onclick="exportGradesPDF()">📄 تصدير / طباعة PDF مباشر</button>
       </div>
 
-      <!-- شريط إحصائيات القاعة -->
+      <!-- شريط إحصائيات القاعة للمدير فقط -->
       <div class="stats-bar-box" id="hall-stats-bar" style="display:none;">
         <div>👥 إجمالي الطلاب: <span id="stat-total-students" style="color:#4318FF;">0</span></div>
         <div>✅ نسبة النجاح: <span id="stat-pass-rate" style="color:#05cd99;">0%</span></div>
@@ -438,41 +461,10 @@
       </div>
     </div>
 
-    <!-- 4. التقارير والنتائج -->
-    <div id="reports-view" class="view-section">
-      <div class="section-title">
-        <span>📈 النتائج والتقارير العامة وإصدار الأوائل</span>
-        <button class="back-btn" onclick="closeView('reports-view')">رجوع ↩</button>
-      </div>
-      <div class="controls-bar">
-        <label style="width:auto; margin:0;">القاعة: </label>
-        <select id="report-hall-select" style="width:auto; margin:0;" onchange="generateReport()"></select>
-        <button class="btn-action btn-purple" onclick="window.print()">🖨️ طباعة التقرير</button>
-      </div>
-      
-      <div id="printable-area" class="printable-pdf">
-        <h3 style="text-align: center; margin-bottom: 15px;">جدول ملخص معدلات القاعة والنتائج</h3>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>اسم الطالب الثلاثي</th>
-                <th>الاختصاص</th>
-                <th>المدرس المشرف</th>
-                <th>معدل السعي لكافة المواد</th>
-                <th>النتيجة</th>
-              </tr>
-            </thead>
-            <tbody id="report-table-body"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- 5. إعدادات المنصة والنسخ الاحتياطي -->
+    <!-- 4. إعدادات المنصة والنسخ الاحتياطي وقفل الدرجات -->
     <div id="settings-view" class="view-section">
       <div class="section-title">
-        <span>⚙️ إعدادات المنصة والنسخ الاحتياطي</span>
+        <span>⚙️ إعدادات المنصة وقفل إدخال الدرجات</span>
         <button class="back-btn" onclick="closeView('settings-view')">رجوع ↩</button>
       </div>
       
@@ -486,7 +478,37 @@
         <input type="text" id="set-admin-pass" placeholder="أدخل رمز مدير جديد">
       </div>
 
-      <button class="btn-action btn-green" onclick="saveSettings()">💾 حفظ الإعدادات العامة</button>
+      <!-- قسم التحكم بقفل إضافة وتعديل الدرجات للمدرسين -->
+      <div class="lock-box-container">
+        <h4 style="color:#EE5D50; margin-bottom:8px;">🔒 التحكم بقفل إدخال الدرجات للمدرسين:</h4>
+        <p style="font-size:0.8rem; color:#666; margin-bottom:12px;">عند تفعيل القفل لأي مرحلة، لن يتمكن المدرسون من تعديل أو إدخال الدرجات الخاصة بها (تبقى متاحة للمدير فقط).</p>
+
+        <div class="lock-option">
+          <span>🔒 قفل درجات <b>الفصل / الكورس الأول</b> (شهور الكورس الأول):</span>
+          <label class="switch">
+            <input type="checkbox" id="lock-term1" onchange="saveLockSettings()">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="lock-option">
+          <span>🔒 قفل درجات <b>امتحانات نصف السنة</b>:</span>
+          <label class="switch">
+            <input type="checkbox" id="lock-midterm" onchange="saveLockSettings()">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="lock-option">
+          <span>🔒 قفل درجات <b>الفصل / الكورس الثاني</b> (شهور الكورس الثاني):</span>
+          <label class="switch">
+            <input type="checkbox" id="lock-term2" onchange="saveLockSettings()">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <button class="btn-action btn-green" style="margin-top:15px;" onclick="saveSettings()">💾 حفظ الإعدادات العامة</button>
 
       <hr style="margin: 20px 0; opacity: 0.2;">
       <h3 style="margin-bottom:12px;">📁 إدارة النسخ الاحتياطي وحماية البيانات</h3>
@@ -512,7 +534,12 @@
     let schoolDB = JSON.parse(localStorage.getItem('school_master_db')) || {
       settings: {
         schoolName: "المنصة المدرسية الإلكترونية",
-        adminPass: "1987"
+        adminPass: "1987",
+        locks: {
+          term1: false,
+          midterm: false,
+          term2: false
+        }
       },
       teachers: [],
       halls: {},
@@ -521,6 +548,9 @@
 
     if (!schoolDB.settings) schoolDB.settings = {};
     if (!schoolDB.settings.adminPass) schoolDB.settings.adminPass = "1987";
+    if (!schoolDB.settings.locks) {
+      schoolDB.settings.locks = { term1: false, midterm: false, term2: false };
+    }
     if (!schoolDB.hallTeachersMap) schoolDB.hallTeachersMap = {};
 
     function saveData() {
@@ -540,6 +570,21 @@
 
       document.getElementById('set-school-name').value = schoolDB.settings.schoolName || "";
       document.getElementById('set-admin-pass').value = schoolDB.settings.adminPass || "1987";
+
+      // تحديث أزرار قفل الدرجات
+      let locks = schoolDB.settings.locks || { term1: false, midterm: false, term2: false };
+      document.getElementById('lock-term1').checked = !!locks.term1;
+      document.getElementById('lock-midterm').checked = !!locks.midterm;
+      document.getElementById('lock-term2').checked = !!locks.term2;
+    }
+
+    function saveLockSettings() {
+      schoolDB.settings.locks = {
+        term1: document.getElementById('lock-term1').checked,
+        midterm: document.getElementById('lock-midterm').checked,
+        term2: document.getElementById('lock-term2').checked
+      };
+      saveData();
     }
 
     document.getElementById('current-date').textContent = new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -605,7 +650,6 @@
       if(id === 'teachers-view') renderTeachers();
       if(id === 'students-view') renderHalls();
       if(id === 'grades-view') setupGradesView();
-      if(id === 'reports-view') updateDropdown('report-hall-select');
     }
 
     function closeView(id) {
@@ -871,7 +915,6 @@
     function saveStudentData() {
       const name = document.getElementById('student-fullname').value.trim();
       const hall = document.getElementById('student-hall-select').value;
-      const spec = document.getElementById('student-spec-select').value;
       const phone = document.getElementById('student-phone').value.trim();
 
       if (!name || !hall) {
@@ -883,7 +926,6 @@
 
       schoolDB.halls[hall].push({
         name: name,
-        spec: spec,
         phone: phone,
         assignedTeacher: "",
         grades: {}
@@ -1021,7 +1063,6 @@
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <div>
                 <b style="font-size:0.88rem;">👤 ${s.name}</b>
-                <span class="spec-tag">${s.spec || 'عام'}</span>
               </div>
               <div>
                 <button onclick="openStudentReportCard('${hall}', ${idx})" title="بطاقة الطالب" style="border:none; background:none; cursor:pointer; font-size:0.9rem;">🎓</button>
@@ -1051,101 +1092,28 @@
             </div>
 
             <p style="font-size:0.8rem; color:#666; margin-bottom:8px;">إجمالي الطلاب: <b>${students.length}</b></p>
-            
-            <label class="btn-action btn-green" style="width:100%; justify-content:center; font-size:0.75rem; margin-bottom:8px; cursor:pointer;">
-              📥 استيراد طلاب من ملف Excel
-              <input type="file" accept=".xlsx, .xls, .csv" style="display:none" onchange="handleHallExcel(event, '${hall}')">
-            </label>
-
-            <label style="font-size:0.8rem; font-weight:bold; display:block; margin-bottom:4px;">إدخال سريع لأسماء الطلاب الثلاثية:</label>
-            <textarea id="bulk-students-${hall}" rows="2" style="width:100%; font-size:0.8rem; margin-bottom:6px;" placeholder="ضع أسماء الطلاب تفصلها فارزة أو سطر جديد..."></textarea>
-            <button class="btn-action btn-blue" style="width:100%; justify-content:center; font-size:0.75rem; margin-bottom:10px;" onclick="addBulkStudents('${hall}')">💾 حفظ الأسماء السريعة</button>
-
-            <div style="max-height:180px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;">
-              ${studentsList || '<small style="color:#aaa;">لا يوجد طلاب مخصصين بعد</small>'}
-            </div>
+            <div style="max-height:180px; overflow-y:auto; padding-left:4px;">${studentsList || '<p style="color:#aaa; font-size:0.8rem;">لا يوجد طلاب مضافون في هذه القاعة</p>'}</div>
           </div>`;
       }
     }
 
-    function assignTeacherToStudent(hall, studentIdx, teacherName) {
-      schoolDB.halls[hall][studentIdx].assignedTeacher = teacherName;
-      saveData();
-    }
-
     function addCustomHall() {
-      const hall = prompt("اسم القاعة الدراسية الجديدة (مثال: قاعة 1، قاعة 2):");
-      if(hall && !schoolDB.halls[hall]) {
-        schoolDB.halls[hall] = [];
+      const hallName = prompt("أدخل اسم القاعة الدراسية الجديدة (مثال: القاعة 1):");
+      if (hallName && hallName.trim()) {
+        const name = hallName.trim();
+        if (schoolDB.halls[name]) {
+          alert("القاعة موجودة بالفعل!");
+          return;
+        }
+        schoolDB.halls[name] = [];
+        schoolDB.hallTeachersMap[name] = [];
         saveData();
         renderHalls();
       }
     }
 
-    function handleHallExcel(e, hall) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        try {
-          const data = new Uint8Array(evt.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-          const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-          const jsonData = XLSX.utils.sheet_to_json(firstSheet, { defval: "" });
-          
-          if (jsonData.length === 0) {
-            alert("الملف فارغ!");
-            return;
-          }
-
-          let addedCount = 0;
-          if (!schoolDB.halls[hall]) schoolDB.halls[hall] = [];
-
-          jsonData.forEach(row => {
-            const name = row['اسم الطالب'] || row['الاسم'] || row['الاسم الثلاثي'] || row['Name'] || Object.values(row)[0];
-            const spec = row['الاختصاص'] || row['الفرع'] || 'عام';
-            const phone = row['الهاتف'] || row['Phone'] || '';
-
-            if (name && name.toString().trim() !== "") {
-              schoolDB.halls[hall].push({
-                name: name.toString().trim(),
-                spec: spec.toString().trim(),
-                phone: phone.toString().trim(),
-                assignedTeacher: "",
-                grades: {}
-              });
-              addedCount++;
-            }
-          });
-
-          saveData();
-          renderHalls();
-          alert(`تم استيراد ${addedCount} طالب بنجاح!`);
-        } catch (err) {
-          alert("خطأ أثناء قراءة الملف.");
-        }
-      };
-
-      reader.readAsArrayBuffer(file);
-    }
-
-    function addBulkStudents(hall) {
-      const input = document.getElementById(`bulk-students-${hall}`).value.trim();
-      if (!input) return;
-
-      const names = input.split(/[\n,]+/).map(n => n.trim()).filter(n => n.length > 0);
-      names.forEach(name => {
-        schoolDB.halls[hall].push({ name, spec: "عام", phone: "", assignedTeacher: "", grades: {} });
-      });
-
-      saveData();
-      renderHalls();
-      alert(`تم إضافة ${names.length} طالب إلى ${hall}!`);
-    }
-
     function deleteHall(hall) {
-      if(confirm(`حذف (${hall}) مع طلابها؟`)) {
+      if (confirm(`هل أنت متأكد من حذف (${hall}) وكافة بيانات الطلاب فيها؟`)) {
         delete schoolDB.halls[hall];
         delete schoolDB.hallTeachersMap[hall];
         saveData();
@@ -1154,258 +1122,341 @@
     }
 
     function removeStudent(hall, idx) {
-      schoolDB.halls[hall].splice(idx, 1);
-      saveData();
-      renderHalls();
+      if(confirm("حذف الطالب من القاعة؟")) {
+        schoolDB.halls[hall].splice(idx, 1);
+        saveData();
+        renderHalls();
+      }
     }
 
-    function calculateAnnualGrade(g) {
-      const val1 = (g.term1 !== null && g.term1 !== undefined) ? parseFloat(g.term1) : null;
-      const valMid = (g.mid !== null && g.mid !== undefined) ? parseFloat(g.mid) : null;
-      const val2 = (g.term2 !== null && g.term2 !== undefined) ? parseFloat(g.term2) : null;
+    function assignTeacherToStudent(hall, studentIdx, teacherName) {
+      schoolDB.halls[hall][studentIdx].assignedTeacher = teacherName;
+      saveData();
+    }
 
-      let sum = 0, count = 0;
+    function parseGradeVal(val) {
+      if (val === null || val === undefined || val === "") return { type: 'empty', val: null };
+      let str = val.toString().trim().toLowerCase();
+      if (str === 'غ' || str === 'g') return { type: 'absent', val: 'غ' };
+      if (str === 'م' || str === 'm') return { type: 'excused', val: 'م' };
 
-      if (val1 !== null && !isNaN(val1)) { sum += val1; count++; }
-      if (valMid !== null && !isNaN(valMid)) { sum += valMid; count++; }
-      if (val2 !== null && !isNaN(val2)) { sum += val2; count++; }
+      let num = parseFloat(str);
+      if (isNaN(num)) return { type: 'empty', val: null };
+      if (num < 0) num = 0;
+      if (num > 100) num = 100;
+      return { type: 'num', val: num };
+    }
 
-      if (count === 0) return null;
-      return Math.round(sum / count);
+    function calcAvgFromList(arr) {
+      let sum = 0, count = 0, hasAbsent = false, hasExcused = false;
+
+      arr.forEach(item => {
+        let parsed = parseGradeVal(item);
+        if (parsed.type === 'num') {
+          sum += parsed.val;
+          count++;
+        } else if (parsed.type === 'absent') {
+          hasAbsent = true;
+        } else if (parsed.type === 'excused') {
+          hasExcused = true;
+        }
+      });
+
+      if (count > 0) return { display: Math.round(sum / count), val: Math.round(sum / count) };
+      if (hasAbsent) return { display: 'غائب', val: 0 };
+      if (hasExcused) return { display: 'مجاز', val: 0 };
+      return { display: '-', val: 0 };
     }
 
     function loadGradeTable() {
       const hall = document.getElementById('grade-hall-select').value;
+      const viewType = document.getElementById('grade-view-type') ? document.getElementById('grade-view-type').value : 'subject';
       const thead = document.getElementById('grades-table-head');
       const tbody = document.getElementById('grades-table-body');
-      const statsBar = document.getElementById('hall-stats-bar');
-
-      let viewType = 'subject';
-      let subject = '';
-
-      if (currentUser && currentUser.role === 'teacher') {
-        viewType = 'subject';
-        subject = currentUser.teacher.subject;
-      } else {
-        viewType = document.getElementById('grade-view-type').value;
-        subject = document.getElementById('grade-subject-select').value;
-
-        const subjectSelect = document.getElementById('grade-subject-select');
-        const subjectLabel = document.getElementById('subject-select-label');
-        if (viewType === 'all_subjects') {
-          subjectSelect.style.display = 'none';
-          subjectLabel.style.display = 'none';
-        } else {
-          subjectSelect.style.display = 'inline-block';
-          subjectLabel.style.display = 'inline-block';
-        }
-      }
-
+      
       thead.innerHTML = '';
       tbody.innerHTML = '';
 
-      if(!hall || !schoolDB.halls[hall]) {
-        statsBar.style.display = 'none';
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:#a0aec0;">يرجى اختيار القاعة والمادة لعرض السجل التفاعلي</td></tr>';
+      if (!hall || !schoolDB.halls[hall]) {
+        tbody.innerHTML = '<tr><td colspan="15">اختر القاعة الدراسية لعرض السجل</td></tr>';
+        document.getElementById('hall-stats-bar').style.display = 'none';
         return;
       }
 
-      statsBar.style.display = 'flex';
-      let totalStudentsCount = schoolDB.halls[hall].length;
-      let passCount = 0, failCount = 0;
+      const students = schoolDB.halls[hall];
 
-      if (viewType === 'subject') {
-        if (!subject) {
-          statsBar.style.display = 'none';
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:#a0aec0;">يرجى اختيار المادة الدراسية لعرض الدرجات</td></tr>';
-          return;
-        }
-
-        thead.innerHTML = `
-          <tr>
-            <th style="width:40px;">#</th>
-            <th style="min-width:200px; text-align:right;">اسم الطالب الثلاثي</th>
-            <th style="width:100px;">الاختصاص</th>
-            <th style="width:110px;">سعي الفصل الأول</th>
-            <th style="width:110px; background:#7F00FF;">نصف السنة</th>
-            <th style="width:110px;">سعي الفصل الثاني</th>
-            <th style="width:110px; background:#00b894;">السعي السنوي</th>
-            <th style="width:50px;">بطاقة</th>
-          </tr>`;
-
-        schoolDB.halls[hall].forEach((student, idx) => {
-          if(!student.grades) student.grades = {};
-          if(!student.grades[subject]) student.grades[subject] = { term1: null, mid: null, term2: null };
-          
-          const g = student.grades[subject];
-          const val1 = (g.term1 !== null && g.term1 !== undefined) ? g.term1 : '';
-          const valMid = (g.mid !== null && g.mid !== undefined) ? g.mid : '';
-          const val2 = (g.term2 !== null && g.term2 !== undefined) ? g.term2 : '';
-
-          const annual = calculateAnnualGrade(g);
-          if (annual !== null) {
-            if (annual >= 50) passCount++; else failCount++;
-          }
-
-          const badgeClass = (annual !== null && annual >= 50) ? 'badge-pass' : 'badge-fail';
-          const statusText = annual !== null ? annual : '-';
-
-          tbody.innerHTML += `
-            <tr id="row-${idx}" class="student-row">
-              <td><b>${idx + 1}</b></td>
-              <td style="text-align:right;" class="student-name-td"><b>${student.name}</b></td>
-              <td><span class="spec-tag">${student.spec || 'عام'}</span></td>
-              <td><input type="number" class="grade-input" value="${val1}" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'term1', this.value)"></td>
-              <td><input type="number" class="grade-input midterm-input" value="${valMid}" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'mid', this.value)"></td>
-              <td><input type="number" class="grade-input" value="${val2}" min="0" max="100" oninput="updateGrade('${hall}', ${idx}, '${subject}', 'term2', this.value)"></td>
-              <td><span class="annual-badge ${badgeClass} annual-val">${statusText}</span></td>
-              <td><button onclick="openStudentReportCard('${hall}', ${idx})" title="عرض كارت الدرجات" style="border:none; background:none; cursor:pointer;">🎓</button></td>
-            </tr>`;
-        });
-
+      if (currentUser && currentUser.role === 'teacher') {
+        renderSubjectGradesTable(students, currentUser.teacher.subject, hall);
       } else {
-        const subjectsList = schoolDB.teachers.map(t => t.subject);
-        
-        if (subjectsList.length === 0) {
-          statsBar.style.display = 'none';
-          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#a0aec0;">لا توجد مواد مضافات بعد.</td></tr>';
-          return;
+        if (viewType === 'subject') {
+          const subject = document.getElementById('grade-subject-select').value;
+          document.getElementById('subject-select-label').style.display = 'inline-block';
+          document.getElementById('grade-subject-select').style.display = 'inline-block';
+          renderSubjectGradesTable(students, subject, hall);
+        } else {
+          document.getElementById('subject-select-label').style.display = 'none';
+          document.getElementById('grade-subject-select').style.display = 'none';
+          renderAllSubjectsTable(students, hall);
         }
+      }
+    }
 
-        let subHeaders = '';
-        subjectsList.forEach(s => { subHeaders += `<th style="min-width:90px;">${s}</th>`; });
+    function renderSubjectGradesTable(students, subject, hall) {
+      const thead = document.getElementById('grades-table-head');
+      const tbody = document.getElementById('grades-table-body');
+      const isTeacher = currentUser && currentUser.role === 'teacher';
+      const locks = schoolDB.settings.locks || { term1: false, midterm: false, term2: false };
 
-        thead.innerHTML = `
-          <tr>
-            <th style="width:40px;">#</th>
-            <th style="min-width:180px; text-align:right;">اسم الطالب الثلاثي</th>
-            <th style="width:100px;">الاختصاص</th>
-            ${subHeaders}
-            <th style="width:100px; background:#2b12b3;">المعدل العام</th>
-            <th style="width:90px; background:#00b894;">النتيجة العامة</th>
-            <th style="width:50px;">بطاقة</th>
-          </tr>`;
-
-        schoolDB.halls[hall].forEach((student, idx) => {
-          let totalAnnual = 0, countSubjects = 0, cols = '';
-
-          subjectsList.forEach(s => {
-            const g = (student.grades && student.grades[s]) ? student.grades[s] : { term1: null, mid: null, term2: null };
-            const ann = calculateAnnualGrade(g);
-            
-            if(ann !== null) {
-              totalAnnual += ann;
-              countSubjects++;
-              cols += `<td><b style="color:${ann>=50?'#2b3674':'#EE5D50'}">${ann}</b></td>`;
-            } else {
-              cols += `<td><span style="color:#aaa;">-</span></td>`;
-            }
-          });
-
-          const finalAvg = countSubjects ? Math.round(totalAnnual / countSubjects) : 0;
-          const isPass = finalAvg >= 50;
-
-          if (countSubjects > 0) {
-            if (isPass) passCount++; else failCount++;
-          }
-
-          tbody.innerHTML += `
-            <tr class="student-row">
-              <td><b>${idx + 1}</b></td>
-              <td style="text-align:right;" class="student-name-td"><b>${student.name}</b></td>
-              <td><span class="spec-tag">${student.spec || 'عام'}</span></td>
-              ${cols}
-              <td><b style="color:#4318FF; font-size:1.05rem;">${countSubjects > 0 ? finalAvg : '-'}</b></td>
-              <td>
-                <span class="annual-badge ${isPass && countSubjects > 0 ? 'badge-pass' : 'badge-fail'}" style="font-size:0.8rem; padding:3px 8px;">
-                  ${countSubjects === 0 ? '-' : (isPass ? 'ناجح' : 'راسب')}
-                </span>
-              </td>
-              <td><button onclick="openStudentReportCard('${hall}', ${idx})" title="عرض كارت الدرجات" style="border:none; background:none; cursor:pointer;">🎓</button></td>
-            </tr>`;
-        });
+      if (!subject) {
+        tbody.innerHTML = '<tr><td colspan="15">يرجى تحديد المادة الدراسية للعرض</td></tr>';
+        document.getElementById('hall-stats-bar').style.display = 'none';
+        return;
       }
 
-      // تحديث شريط الإحصائيات
-      document.getElementById('stat-total-students').textContent = totalStudentsCount;
-      const evaluatedStudents = passCount + failCount;
-      const passRate = evaluatedStudents > 0 ? Math.round((passCount / evaluatedStudents) * 100) : 0;
-      document.getElementById('stat-pass-rate').textContent = passRate + "%";
-      document.getElementById('stat-fail-count').textContent = failCount;
+      // تحديد حالة التعطيل للحقول وفق الحساب والقفل
+      const term1Disabled = isTeacher && locks.term1 ? 'disabled' : '';
+      const midDisabled = isTeacher && locks.midterm ? 'disabled' : '';
+      const term2Disabled = isTeacher && locks.term2 ? 'disabled' : '';
+
+      let thHTML = `
+        <tr>
+          <th>#</th>
+          <th>اسم الطالب الثلاثي</th>
+          <th>شهر 1 (100) ${locks.term1 ? '🔒' : ''}</th>
+          <th>شهر 2 (100) ${locks.term1 ? '🔒' : ''}</th>
+          <th>شهر 3 (100) ${locks.term1 ? '🔒' : ''}</th>
+          <th>معدل الكورس الأول</th>
+          <th>نصف السنة (100) ${locks.midterm ? '🔒' : ''}</th>
+          <th>شهر 1 كورس 2 ${locks.term2 ? '🔒' : ''}</th>
+          <th>شهر 2 كورس 2 ${locks.term2 ? '🔒' : ''}</th>
+          <th>معدل الكورس الثاني</th>`;
+      
+      if (!isTeacher) {
+        thHTML += `<th>المعدل السنوي</th>`;
+      }
+      thHTML += `</tr>`;
+      thead.innerHTML = thHTML;
+
+      let passCount = 0;
+      let totalStudents = students.length;
+
+      students.forEach((s, idx) => {
+        if (!s.grades) s.grades = {};
+        if (!s.grades[subject]) {
+          s.grades[subject] = { m1: "", m2: "", m3: "", mid: "", m1_c2: "", m2_c2: "" };
+        }
+        let g = s.grades[subject];
+
+        let c1 = calcAvgFromList([g.m1, g.m2, g.m3]);
+        let c2 = calcAvgFromList([g.m1_c2, g.m2_c2]);
+        let midParsed = parseGradeVal(g.mid);
+
+        let sumTerms = 0, countTerms = 0;
+
+        if (typeof c1.display === 'number') { sumTerms += c1.val; countTerms++; }
+        if (midParsed.type === 'num') { sumTerms += midParsed.val; countTerms++; }
+        if (typeof c2.display === 'number') { sumTerms += c2.val; countTerms++; }
+
+        let annualAvg = countTerms > 0 ? Math.round(sumTerms / countTerms) : 0;
+
+        if (annualAvg >= 50) passCount++;
+
+        let badgeClass = annualAvg >= 50 ? 'badge-pass' : 'badge-fail';
+
+        let trHTML = `
+          <tr>
+            <td>${idx + 1}</td>
+            <td><b>${s.name}</b></td>
+            <td><input type="text" class="grade-input" ${term1Disabled} value="${g.m1||''}" placeholder="0-100/غ/م" onchange="updateGrade('${hall}', ${idx}, '${subject}', 'm1', this.value)"></td>
+            <td><input type="text" class="grade-input" ${term1Disabled} value="${g.m2||''}" placeholder="0-100/غ/م" onchange="updateGrade('${hall}', ${idx}, '${subject}', 'm2', this.value)"></td>
+            <td><input type="text" class="grade-input" ${term1Disabled} value="${g.m3||''}" placeholder="0-100/غ/م" onchange="updateGrade('${hall}', ${idx}, '${subject}', 'm3', this.value)"></td>
+            <td style="font-weight:bold; color:#4318FF;">${c1.display}</td>
+            <td><input type="text" class="grade-input midterm-input" ${midDisabled} value="${g.mid||''}" placeholder="0-100/غ/م" onchange="updateGrade('${hall}', ${idx}, '${subject}', 'mid', this.value)"></td>
+            <td><input type="text" class="grade-input" ${term2Disabled} value="${g.m1_c2||''}" placeholder="0-100/غ/م" onchange="updateGrade('${hall}', ${idx}, '${subject}', 'm1_c2', this.value)"></td>
+            <td><input type="text" class="grade-input" ${term2Disabled} value="${g.m2_c2||''}" placeholder="0-100/غ/م" onchange="updateGrade('${hall}', ${idx}, '${subject}', 'm2_c2', this.value)"></td>
+            <td style="font-weight:bold; color:#4318FF;">${c2.display}</td>`;
+
+        if (!isTeacher) {
+          trHTML += `<td><span class="annual-badge ${badgeClass}">${annualAvg}</span></td>`;
+        }
+        trHTML += `</tr>`;
+
+        tbody.innerHTML += trHTML;
+      });
+
+      if (isTeacher) {
+        document.getElementById('hall-stats-bar').style.display = 'none';
+      } else {
+        document.getElementById('hall-stats-bar').style.display = 'flex';
+        document.getElementById('stat-total-students').textContent = totalStudents;
+        document.getElementById('stat-fail-count').textContent = totalStudents - passCount;
+        document.getElementById('stat-pass-rate').textContent = totalStudents > 0 ? Math.round((passCount / totalStudents) * 100) + '%' : '0%';
+      }
+    }
+
+    function renderAllSubjectsTable(students, hall) {
+      const thead = document.getElementById('grades-table-head');
+      const tbody = document.getElementById('grades-table-body');
+
+      const subjects = schoolDB.teachers.map(t => t.subject);
+
+      if (subjects.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="15">لا يوجد مدرسون ومواد دراسية معرفة بالنظام</td></tr>';
+        document.getElementById('hall-stats-bar').style.display = 'none';
+        return;
+      }
+
+      let headHTML = `<tr><th>#</th><th>اسم الطالب</th>`;
+      subjects.forEach(sub => headHTML += `<th>${sub}</th>`);
+      headHTML += `<th>المعدل العام</th><th>النتيجة</th></tr>`;
+      thead.innerHTML = headHTML;
+
+      let passCount = 0;
+
+      students.forEach((s, idx) => {
+        let rowHTML = `<tr><td>${idx + 1}</td><td><b>${s.name}</b></td>`;
+        let totalAvgSum = 0;
+        let validSubjectsCount = 0;
+
+        subjects.forEach(sub => {
+          let g = s.grades && s.grades[sub] ? s.grades[sub] : {};
+          let c1 = calcAvgFromList([g.m1, g.m2, g.m3]);
+          let c2 = calcAvgFromList([g.m1_c2, g.m2_c2]);
+          let midParsed = parseGradeVal(g.mid);
+
+          let sumTerms = 0, countTerms = 0;
+
+          if (typeof c1.display === 'number') { sumTerms += c1.val; countTerms++; }
+          if (midParsed.type === 'num') { sumTerms += midParsed.val; countTerms++; }
+          if (typeof c2.display === 'number') { sumTerms += c2.val; countTerms++; }
+
+          let annualAvg = countTerms > 0 ? Math.round(sumTerms / countTerms) : 0;
+
+          if (countTerms > 0) {
+            totalAvgSum += annualAvg;
+            validSubjectsCount++;
+          }
+
+          rowHTML += `<td style="font-weight:bold;">${annualAvg || '-'}</td>`;
+        });
+
+        let overallAvg = validSubjectsCount > 0 ? Math.round(totalAvgSum / validSubjectsCount) : 0;
+        let isPass = overallAvg >= 50;
+        if (isPass) passCount++;
+
+        let badgeClass = isPass ? 'badge-pass' : 'badge-fail';
+
+        rowHTML += `<td style="font-weight:800; color:#4318FF;">${overallAvg}</td>`;
+        rowHTML += `<td><span class="annual-badge ${badgeClass}">${isPass ? 'ناجح' : 'راسب'}</span></td></tr>`;
+
+        tbody.innerHTML += rowHTML;
+      });
+
+      document.getElementById('hall-stats-bar').style.display = 'flex';
+      document.getElementById('stat-total-students').textContent = students.length;
+      document.getElementById('stat-fail-count').textContent = students.length - passCount;
+      document.getElementById('stat-pass-rate').textContent = students.length > 0 ? Math.round((passCount / students.length) * 100) + '%' : '0%';
+    }
+
+    function updateGrade(hall, studentIdx, subject, field, val) {
+      if (!schoolDB.halls[hall][studentIdx].grades) {
+        schoolDB.halls[hall][studentIdx].grades = {};
+      }
+      if (!schoolDB.halls[hall][studentIdx].grades[subject]) {
+        schoolDB.halls[hall][studentIdx].grades[subject] = { m1: "", m2: "", m3: "", mid: "", m1_c2: "", m2_c2: "" };
+      }
+
+      let parsed = parseGradeVal(val);
+      let finalVal = "";
+
+      if (parsed.type === 'num') {
+        finalVal = parsed.val;
+      } else if (parsed.type === 'absent') {
+        finalVal = 'غ';
+      } else if (parsed.type === 'excused') {
+        finalVal = 'م';
+      } else {
+        finalVal = "";
+      }
+
+      schoolDB.halls[hall][studentIdx].grades[subject][field] = finalVal;
+      saveData();
+      loadGradeTable();
     }
 
     function filterGradesTable() {
-      const query = document.getElementById('grade-search-input').value.toLowerCase().trim();
-      const rows = document.querySelectorAll('#grades-table-body .student-row');
-
+      const q = document.getElementById('grade-search-input').value.toLowerCase();
+      const rows = document.querySelectorAll('#grades-table-body tr');
       rows.forEach(row => {
-        const nameTd = row.querySelector('.student-name-td');
-        if (nameTd) {
-          const text = nameTd.textContent.toLowerCase();
-          row.style.display = text.includes(query) ? '' : 'none';
-        }
+        const nameText = row.cells[1] ? row.cells[1].textContent.toLowerCase() : '';
+        row.style.display = nameText.includes(q) ? '' : 'none';
       });
     }
 
     function openStudentReportCard(hall, studentIdx) {
       const student = schoolDB.halls[hall][studentIdx];
-      if (!student) return;
+      const modalContent = document.getElementById('student-card-content');
+      document.getElementById('report-card-school-title').textContent = "🎓 " + (schoolDB.settings.schoolName || "بطاقة الطالب");
 
-      document.getElementById('report-card-school-title').textContent = `🎓 ${schoolDB.settings.schoolName || 'المدرسة'}`;
-
-      let rowsHtml = '';
-      let totalSum = 0, count = 0;
-
-      schoolDB.teachers.forEach(t => {
-        const g = (student.grades && student.grades[t.subject]) ? student.grades[t.subject] : { term1: null, mid: null, term2: null };
-        const annual = calculateAnnualGrade(g);
-        
-        if (annual !== null) {
-          totalSum += annual;
-          count++;
-        }
-
-        rowsHtml += `
-          <tr>
-            <td><b>${t.subject}</b></td>
-            <td>${g.term1 !== null ? g.term1 : '-'}</td>
-            <td>${g.mid !== null ? g.mid : '-'}</td>
-            <td>${g.term2 !== null ? g.term2 : '-'}</td>
-            <td><b>${annual !== null ? annual : '-'}</b></td>
-            <td><b style="color:${annual >= 50 ? 'green' : 'red'};">${annual === null ? '-' : (annual >= 50 ? 'ناجح' : 'راسب')}</b></td>
-          </tr>`;
-      });
-
-      const avg = count > 0 ? Math.round(totalSum / count) : '-';
-      const finalResult = count > 0 ? (avg >= 50 ? 'ناجح' : 'راسب') : 'غير مكتمل';
-
-      document.getElementById('student-card-content').innerHTML = `
-        <div style="background:rgba(67, 24, 255, 0.05); padding:12px; border-radius:12px; margin-bottom:15px; border:1px solid rgba(67, 24, 255, 0.1);">
-          <p><b>اسم الطالب:</b> ${student.name}</p>
-          <p><b>القاعة الدراسية:</b> ${hall} | <b>التخصص:</b> ${student.spec || 'عام'}</p>
-          ${student.phone ? `<p><b>هاتف ولي الأمر:</b> ${student.phone}</p>` : ''}
+      let html = `
+        <div style="margin-bottom:15px; background:rgba(67, 24, 255, 0.04); padding:12px; border-radius:12px; font-size:0.9rem;">
+          <div><b>👤 اسم الطالب الثلاثي:</b> ${student.name}</div>
+          <div><b>🏛️ القاعة الدراسية:</b> ${hall}</div>
+          <div><b>👨‍🏫 المدرس المشرف:</b> ${student.assignedTeacher || 'غير محدد'}</div>
         </div>
 
         <table style="width:100%; border-collapse:collapse;">
           <thead>
             <tr>
-              <th>المادة</th>
-              <th>فصل 1</th>
-              <th>نصف السنة</th>
-              <th>فصل 2</th>
-              <th>السعي السنوي</th>
+              <th>المادة الدراسية</th>
+              <th>السعي</th>
               <th>النتيجة</th>
             </tr>
           </thead>
-          <tbody>${rowsHtml}</tbody>
+          <tbody>`;
+
+      let subjects = schoolDB.teachers.map(t => t.subject);
+      let totalAvgSum = 0;
+      let count = 0;
+
+      subjects.forEach(sub => {
+        let g = student.grades && student.grades[sub] ? student.grades[sub] : {};
+        let c1 = calcAvgFromList([g.m1, g.m2, g.m3]);
+        let c2 = calcAvgFromList([g.m1_c2, g.m2_c2]);
+        let midParsed = parseGradeVal(g.mid);
+
+        let sumTerms = 0, countTerms = 0;
+
+        if (typeof c1.display === 'number') { sumTerms += c1.val; countTerms++; }
+        if (midParsed.type === 'num') { sumTerms += midParsed.val; countTerms++; }
+        if (typeof c2.display === 'number') { sumTerms += c2.val; countTerms++; }
+
+        let avg = countTerms > 0 ? Math.round(sumTerms / countTerms) : 0;
+
+        if (countTerms > 0) {
+          totalAvgSum += avg;
+          count++;
+        }
+
+        let isPass = avg >= 50;
+        html += `
+          <tr>
+            <td><b>${sub}</b></td>
+            <td><b>${avg || '-'}</b></td>
+            <td><span class="annual-badge ${isPass ? 'badge-pass' : 'badge-fail'}">${isPass ? 'ناجح' : 'راسب'}</span></td>
+          </tr>`;
+      });
+
+      let finalAvg = count > 0 ? Math.round(totalAvgSum / count) : 0;
+
+      html += `
+          </tbody>
         </table>
+        <div style="margin-top:15px; text-align:center; font-size:1.1rem; font-weight:bold; color:#4318FF;">
+          المعدل العام للطالب: ${finalAvg}٪
+        </div>`;
 
-        <div style="display:flex; justify-content:space-between; margin-top:15px; padding-top:10px; border-top:2px solid #eee;">
-          <h4>المعدل العام: <span style="color:#4318FF;">${avg}</span></h4>
-          <h4>النتيجة العامة: <span style="color:${avg >= 50 ? 'green' : 'red'};">${finalResult}</span></h4>
-        </div>
-      `;
-
+      modalContent.innerHTML = html;
       document.getElementById('student-report-card-modal').style.display = 'flex';
     }
 
@@ -1413,159 +1464,37 @@
       document.getElementById('student-report-card-modal').style.display = 'none';
     }
 
-    function updateGrade(hall, idx, subject, field, val) {
-      if(!schoolDB.halls[hall][idx].grades) schoolDB.halls[hall][idx].grades = {};
-      if(!schoolDB.halls[hall][idx].grades[subject]) schoolDB.halls[hall][idx].grades[subject] = { term1: null, mid: null, term2: null };
-      
-      if (val === "" || val === null) {
-        schoolDB.halls[hall][idx].grades[subject][field] = null;
-      } else {
-        let num = parseFloat(val);
-        if(isNaN(num) || num < 0) num = 0;
-        if(num > 100) num = 100;
-        schoolDB.halls[hall][idx].grades[subject][field] = num;
-      }
-      
-      saveData();
-
-      const row = document.getElementById(`row-${idx}`);
-      if (row) {
-        const student = schoolDB.halls[hall][idx];
-        const g = student.grades[subject];
-        const annual = calculateAnnualGrade(g);
-
-        const annualElem = row.querySelector('.annual-val');
-        if(annualElem) {
-          const badgeClass = (annual !== null && annual >= 50) ? 'badge-pass' : 'badge-fail';
-          annualElem.textContent = annual !== null ? annual : '-';
-          annualElem.className = `annual-badge ${badgeClass} annual-val`;
-        }
-      }
-    }
-
     function exportGradesExcel() {
-      const hall = document.getElementById('grade-hall-select').value;
-      if (!hall || !schoolDB.halls[hall]) { alert("اختر القاعة أولاً!"); return; }
-
-      let viewType = 'subject';
-      let subject = '';
-
-      if (currentUser && currentUser.role === 'teacher') {
-        subject = currentUser.teacher.subject;
-      } else {
-        viewType = document.getElementById('grade-view-type').value;
-        subject = document.getElementById('grade-subject-select').value;
-      }
-
-      let exportData = [];
-
-      if (viewType === 'subject') {
-        if (!subject) { alert("اختر المادة!"); return; }
-
-        schoolDB.halls[hall].forEach((student, idx) => {
-          const g = (student.grades && student.grades[subject]) ? student.grades[subject] : { term1: null, mid: null, term2: null };
-          const annual = calculateAnnualGrade(g);
-
-          exportData.push({
-            "ت": idx + 1,
-            "اسم الطالب الثلاثي": student.name,
-            "الاختصاص": student.spec || "عام",
-            "سعي الفصل الأول": g.term1 !== null ? g.term1 : "",
-            "درجة نصف السنة": g.mid !== null ? g.mid : "",
-            "سعي الفصل الثاني": g.term2 !== null ? g.term2 : "",
-            "السعي السنوي": annual !== null ? annual : "-",
-            "النتيجة": annual === null ? "-" : (annual >= 50 ? "ناجح" : "راسب")
-          });
-        });
-      } else {
-        const subjectsList = schoolDB.teachers.map(t => t.subject);
-
-        schoolDB.halls[hall].forEach((student, idx) => {
-          let row = {
-            "ت": idx + 1,
-            "اسم الطالب الثلاثي": student.name,
-            "الاختصاص": student.spec || "عام"
-          };
-
-          let totalAnnual = 0, countSubjects = 0;
-          subjectsList.forEach(s => {
-            const g = (student.grades && student.grades[s]) ? student.grades[s] : { term1: null, mid: null, term2: null };
-            const ann = calculateAnnualGrade(g);
-
-            row[s] = ann !== null ? ann : "-";
-            if(ann !== null) { totalAnnual += ann; countSubjects++; }
-          });
-
-          const finalAvg = countSubjects ? Math.round(totalAnnual / countSubjects) : 0;
-          row["المعدل العام"] = countSubjects > 0 ? finalAvg : "-";
-          row["النتيجة العامة"] = countSubjects === 0 ? "-" : (finalAvg >= 50 ? "ناجح" : "راسب");
-
-          exportData.push(row);
-        });
-      }
-
-      const worksheet = XLSX.utils.json_to_sheet(exportData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "سجل الدرجات");
-      XLSX.writeFile(workbook, `سجل_الدرجات_${hall}.xlsx`);
+      const table = document.getElementById('grades-table-element');
+      const wb = XLSX.utils.table_to_book(table, { sheet: "سجل الدرجات" });
+      XLSX.writeFile(wb, "سجل_الدرجات.xlsx");
     }
 
     function exportGradesPDF() {
       const hall = document.getElementById('grade-hall-select').value;
-      let subject = '';
-      let viewType = 'subject';
-
-      if (currentUser && currentUser.role === 'teacher') {
-        subject = currentUser.teacher.subject;
-      } else {
-        viewType = document.getElementById('grade-view-type').value;
-        subject = document.getElementById('grade-subject-select').value;
-      }
+      const subject = document.getElementById('grade-subject-select').value;
       
-      if (!hall) { alert("اختر القاعة أولاً!"); return; }
-
-      const header = document.getElementById('pdf-header');
-      document.getElementById('pdf-school-name').textContent = schoolDB.settings.schoolName;
-      document.getElementById('pdf-subject-title').textContent = viewType === 'subject' 
-        ? `سجل درجات مادة (${subject}) - القاعة: ${hall}`
-        : `السجل العام والربط الشامل - القاعة: ${hall}`;
+      document.getElementById('pdf-school-name').textContent = schoolDB.settings.schoolName || "المدرسة الإلكترونية";
+      document.getElementById('pdf-subject-title').textContent = `سجل درجات قاعة (${hall}) - مادة (${subject || 'الكل'})`;
       
-      header.style.display = 'block';
+      document.getElementById('pdf-header').style.display = 'block';
       window.print();
-      setTimeout(() => { header.style.display = 'none'; }, 1000);
+      document.getElementById('pdf-header').style.display = 'none';
     }
 
-    function generateReport() {
-      const hall = document.getElementById('report-hall-select').value;
-      const tbody = document.getElementById('report-table-body');
-      tbody.innerHTML = '';
-      if(!hall || !schoolDB.halls[hall]) return;
+    function saveSettings() {
+      const name = document.getElementById('set-school-name').value.trim();
+      const pass = document.getElementById('set-admin-pass').value.trim();
 
-      schoolDB.halls[hall].forEach(s => {
-        let totalAnnual = 0, countSubjects = 0;
-        if(s.grades) {
-          for (const [subj, g] of Object.entries(s.grades)) {
-            const ann = calculateAnnualGrade(g);
-            if (ann !== null) { totalAnnual += ann; countSubjects++; }
-          }
-        }
-        const finalAvg = countSubjects ? Math.round(totalAnnual / countSubjects) : 0;
-        const resultLabel = countSubjects === 0 ? 'غير مكتمل' : (finalAvg >= 50 ? 'ناجح' : 'راسب');
-        const resultColor = countSubjects === 0 ? '#7090B0' : (finalAvg >= 50 ? 'green' : 'red');
+      if (name) schoolDB.settings.schoolName = name;
+      if (pass) schoolDB.settings.adminPass = pass;
 
-        tbody.innerHTML += `
-          <tr>
-            <td>${s.name}</td>
-            <td><span class="spec-tag">${s.spec || 'عام'}</span></td>
-            <td>${s.assignedTeacher || 'غير محدد'}</td>
-            <td><b>${countSubjects > 0 ? finalAvg : '-'}</b></td>
-            <td style="color:${resultColor}; font-weight:bold">${resultLabel}</td>
-          </tr>`;
-      });
+      saveLockSettings();
+      alert("تم حفظ الإعدادات العامة وحالة القفل بنجاح!");
     }
 
     function exportBackupJSON() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(schoolDB, null, 2));
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(schoolDB));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
       downloadAnchor.setAttribute("download", `نسخة_احتياطية_المدرسة_${new Date().toISOString().slice(0,10)}.json`);
@@ -1574,45 +1503,39 @@
       downloadAnchor.remove();
     }
 
-    function importBackupJSON(e) {
-      const file = e.target.files[0];
+    function importBackupJSON(event) {
+      const file = event.target.files[0];
       if (!file) return;
 
       const reader = new FileReader();
-      reader.onload = function(evt) {
+      reader.onload = function(e) {
         try {
-          const importedDB = JSON.parse(evt.target.result);
-          if (importedDB && importedDB.settings && importedDB.halls) {
+          const importedDB = JSON.parse(e.target.result);
+          if (importedDB && importedDB.halls) {
             schoolDB = importedDB;
             saveData();
-            alert("تم استرجاع قاعدة البيانات كاملة بنجاح!");
+            alert("تم استرجاع النسخة الاحتياطية بنجاح!");
             location.reload();
           } else {
-            alert("الملف غير صالح أو لا يحتوي على بنية البيانات المطلوبة.");
+            alert("الملف غير صالح أو لا يحتوي على بنية البيانات الصحيحة!");
           }
         } catch (err) {
-          alert("حدث خطأ أثناء قراءة ملف النسخة الاحتياطية.");
+          alert("حدث خطأ أثناء قراءة ملف النسخة الاحتياطية!");
         }
       };
       reader.readAsText(file);
     }
 
-    function saveSettings() {
-      schoolDB.settings.schoolName = document.getElementById('set-school-name').value || "المنصة المدرسية الإلكترونية";
-      const newAdminPass = document.getElementById('set-admin-pass').value.trim();
-      if (newAdminPass) schoolDB.settings.adminPass = newAdminPass;
-      saveData();
-      alert("تم حفظ الإعدادات العامة بنجاح!");
-    }
-
     function resetDatabase() {
-      if(confirm("تحذير: هل تريد مسح جميع بيانات المنصة والمدرسة؟")) {
+      if (confirm("⚠️ تحذير شديد: هل أنت متأكد من مسح وتفريغ كافة البيانات والعودة للضبط الأساسي؟")) {
         localStorage.removeItem('school_master_db');
         location.reload();
       }
     }
 
-    updateDashboardStats();
+    window.onload = function() {
+      updateDashboardStats();
+    };
   </script>
 </body>
 </html>
